@@ -2,7 +2,6 @@ package RSS;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -19,7 +18,7 @@ public class RSSUtils {
         private RSSInfo rssInfo;
         private RSSItem rssItem;
         private boolean isItem;
-        private String currentName;
+        private StringBuilder builder;
         public RSSInfo getRssInfo(){
             return rssInfo;
         }
@@ -28,52 +27,53 @@ public class RSSUtils {
         public void startDocument(){
             rssInfo = new RSSInfo();
             isItem = false;
-            currentName = "";
+            builder = new StringBuilder();
         }
 
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attributes){
-            if(qName.equals(NAME_TITLE)){
-                currentName = NAME_TITLE;
-            }else if(qName.equals(NAME_LINK)) {
-                currentName = NAME_LINK;
-            }else if(qName.equals(NAME_DESCRIPTION)){
-                currentName = NAME_DESCRIPTION;
-            }else if(qName.equals(NAME_ITEM)){
-                rssItem = new RSSItem();
-                isItem = true;
+            switch (qName) {
+                case NAME_ITEM:
+                    rssItem = new RSSItem();
+                    isItem = true;
+                    break;
             }
         }
 
         @Override
         public void characters(char[] ch, int start, int length){
-            if(currentName.equals(NAME_TITLE)){
-                if(isItem){
-                    rssItem.setTitle(new String(ch, start, length));
-                }else {
-                    rssInfo.setTitle(new String(ch, start, length));
-                }
-            }else if(currentName.equals(NAME_LINK)) {
-                if(isItem){
-                    rssItem.setLink(new String(ch, start, length));
-                }else {
-                    rssInfo.setLink(new String(ch, start, length));
-                }
-            }else if(currentName.equals(NAME_DESCRIPTION)){
-                if(isItem){
-                    rssItem.setDescription(new String(ch, start, length));
-                }else {
-                    rssInfo.setDescription(new String(ch, start, length));
-                }
-            }
+            builder.append(ch, start, length);
         }
 
         @Override
         public void endElement(String uri, String localName, String qName){
-            currentName = "";
-            if(qName.equals(NAME_ITEM)){
-                rssInfo.getItems().add(rssItem);
+            String data = builder.toString().trim();
+            switch (qName){
+                case NAME_TITLE:
+                    if(isItem){
+                        rssItem.setTitle(data);
+                    }else{
+                        rssInfo.setTitle(data);
+                    }
+                    break;
+                case NAME_LINK:
+                    if(isItem){
+                        rssItem.setLink(data);
+                    }else{
+                        rssInfo.setLink(data);
+                    }
+                    break;
+                case NAME_DESCRIPTION:
+                    if(isItem){
+                        rssItem.setDescription(data);
+                    }else{
+                        rssInfo.setDescription(data);
+                    }
+                    break;
+                case NAME_ITEM:
+                    rssInfo.getItems().add(rssItem);
             }
+            builder.setLength(0);
         }
     }
 

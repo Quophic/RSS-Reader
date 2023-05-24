@@ -3,7 +3,7 @@ package RSS;
 import java.util.ArrayList;
 import java.util.List;
 
-class RSSInfo{
+public class RSSInfo{
     private String title;
     private String link;
     private String description;
