@@ -1,51 +1,56 @@
 package com.ncusoft.rssreader;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.loader.content.AsyncTaskLoader;
-import androidx.recyclerview.widget.AsyncListDiffer;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.fragment.app.Fragment;
 
-import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.widget.TextView;
+
+import java.util.List;
 
 import RSS.RSSInfo;
 import RSS.RSSUtils;
 
 public class MainActivity extends AppCompatActivity {
-    private static final String RSS_URL = "http://www.people.com.cn/rss/politics.xml";
-    private TextView tvTitle;
-    private RecyclerView rvRSSItems;
+    private static final String[] RSS_URLS = {
+            "http://www.people.com.cn/rss/politics.xml",
+            "http://www.people.com.cn/rss/world.xml",
+            "http://www.people.com.cn/rss/finance.xml",
+            "http://www.people.com.cn/rss/sports.xml"
+    };
+    private List<RSSInfo> rssInfoList;
+    private RSSTitlesFragment rssTitlesFragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        tvTitle = findViewById(R.id.tv_title);
-        rvRSSItems = findViewById(R.id.rv_rss_items);
-        rvRSSItems.setLayoutManager(new LinearLayoutManager(this));
+        rssTitlesFragment = new RSSTitlesFragment();
         new RSSTask().execute();
     }
 
-    class RSSTask extends AsyncTask<RSSInfo, Void, RSSInfo>{
+    public void startFragment(Fragment fragment){
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.f_rss_title_container, fragment)
+                .addToBackStack(null)
+                .commit();
+    }
+    class RSSTask extends AsyncTask<List<RSSInfo>, Void, List<RSSInfo>> {
 
         @Override
-        protected RSSInfo doInBackground(RSSInfo... rssInfos) {
+        protected List<RSSInfo> doInBackground(List<RSSInfo>... lists) {
             try {
-                return RSSUtils.getRSSInfoFromUrl(RSS_URL);
+                return RSSUtils.getRSSInfoFromUrl(RSS_URLS);
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                e.printStackTrace();
             }
+            return null;
         }
-
         @Override
-        protected void onPostExecute(RSSInfo rssInfo) {
-            tvTitle.setText(rssInfo.getTitle());
-            RSSItemsAdapter adapter = new RSSItemsAdapter(rssInfo.getItems());
-            rvRSSItems.setAdapter(adapter);
+        protected void onPostExecute(List<RSSInfo> list) {
+            MainActivity.this.rssInfoList = list;
+            rssTitlesFragment.setRssInfoList(list);
+            startFragment(rssTitlesFragment);
         }
     }
 }

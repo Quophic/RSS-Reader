@@ -13,7 +13,7 @@ import java.util.List;
 import RSS.RSSItem;
 
 public class RSSItemsAdapter extends RecyclerView.Adapter< RSSItemsAdapter.ViewHolder> {
-    List<RSSItem> rssItemList;
+    private List<RSSItem> rssItemList;
     public RSSItemsAdapter(List<RSSItem> rssItemList){
         this.rssItemList = rssItemList;
     }
@@ -27,8 +27,8 @@ public class RSSItemsAdapter extends RecyclerView.Adapter< RSSItemsAdapter.ViewH
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         RSSItem item = rssItemList.get(position);
-        holder.tvTitle.setText(item.getTitle());
-        holder.tvDescription.setText(item.getDescription());
+        holder.tvItemTitle.setText(item.getTitle());
+        holder.tvItemDescription.setText(item.getDescription());
     }
 
     @Override
@@ -37,13 +37,13 @@ public class RSSItemsAdapter extends RecyclerView.Adapter< RSSItemsAdapter.ViewH
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder{
-        public TextView tvTitle;
-        public TextView tvDescription;
+        public TextView tvItemTitle;
+        public TextView tvItemDescription;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvTitle = itemView.findViewById(R.id.tv_title);
-            tvDescription = itemView.findViewById(R.id.tv_description);
+            tvItemTitle = itemView.findViewById(R.id.tv_item_title);
+            tvItemDescription = itemView.findViewById(R.id.tv_item_description);
         }
     }
 }

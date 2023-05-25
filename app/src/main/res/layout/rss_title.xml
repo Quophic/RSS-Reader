@@ -4,19 +4,11 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:layout_margin="10dp">
+
     <TextView
-        android:id="@+id/tv_item_title"
+        android:id="@+id/tv_rss_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="24sp"
-        android:textColor="@color/black"
-        android:text="Title"/>
-    <TextView
-        android:id="@+id/tv_item_description"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:maxLines="4"
-        android:text="description"/>
-
-
+        android:textSize="32sp"
+        android:text="Title" />
 </androidx.appcompat.widget.LinearLayoutCompat>

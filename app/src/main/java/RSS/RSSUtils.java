@@ -6,6 +6,9 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.xml.parsers.SAXParserFactory;
 
 public class RSSUtils {
@@ -77,13 +80,17 @@ public class RSSUtils {
         }
     }
 
-    public static RSSInfo getRSSInfoFromUrl(String urlString) throws Exception{
-        URL url = new URL(urlString);
+    public static List<RSSInfo> getRSSInfoFromUrl(String... urlStrings) throws Exception{
+        List<RSSInfo> infoList = new ArrayList<>();
         XMLReader xmlReader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
         RSSHandler handler = new RSSHandler();
         xmlReader.setContentHandler(handler);
-        xmlReader.parse(new InputSource(url.openStream()));
-        return handler.getRssInfo();
+        for(String urlString : urlStrings){
+            URL url = new URL(urlString);
+            xmlReader.parse(new InputSource(url.openStream()));
+            infoList.add(handler.getRssInfo());
+        }
+        return infoList;
     }
 
 }

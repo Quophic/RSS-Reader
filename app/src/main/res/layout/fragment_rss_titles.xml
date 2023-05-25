@@ -3,11 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
-    android:orientation="vertical">
-
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/f_rss_title_container"
+    tools:context=".RSSTitlesFragment">
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_rss_titles"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
