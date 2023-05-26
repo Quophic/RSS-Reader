@@ -28,7 +28,6 @@ public class RSSItemsAdapter extends RecyclerView.Adapter< RSSItemsAdapter.ViewH
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         RSSItem item = rssItemList.get(position);
         holder.tvItemTitle.setText(item.getTitle());
-        holder.tvItemDescription.setText(item.getDescription());
     }
 
     @Override
@@ -38,12 +37,10 @@ public class RSSItemsAdapter extends RecyclerView.Adapter< RSSItemsAdapter.ViewH
 
     static class ViewHolder extends RecyclerView.ViewHolder{
         public TextView tvItemTitle;
-        public TextView tvItemDescription;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             tvItemTitle = itemView.findViewById(R.id.tv_item_title);
-            tvItemDescription = itemView.findViewById(R.id.tv_item_description);
         }
     }
 }

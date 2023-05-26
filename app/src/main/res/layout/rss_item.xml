@@ -11,12 +11,6 @@
         android:textSize="24sp"
         android:textColor="@color/black"
         android:text="Title"/>
-    <TextView
-        android:id="@+id/tv_item_description"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:maxLines="4"
-        android:text="description"/>
 
 
 </androidx.appcompat.widget.LinearLayoutCompat>
