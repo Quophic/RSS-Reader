@@ -1,4 +1,4 @@
-package RSS;
+package com.ncusoft.rssreader.RSS;
 
 public class RSSItem {
     private String title;

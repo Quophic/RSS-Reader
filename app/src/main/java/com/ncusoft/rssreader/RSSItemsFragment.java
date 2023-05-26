@@ -6,14 +6,11 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.List;
-
-import RSS.RSSInfo;
+import com.ncusoft.rssreader.RSS.RSSInfo;
 
 public class RSSItemsFragment extends Fragment {
     private RSSInfo rssInfo;

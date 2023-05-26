@@ -1,4 +1,4 @@
-package RSS;
+package com.ncusoft.rssreader.RSS;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;

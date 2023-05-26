@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-import RSS.RSSItem;
+import com.ncusoft.rssreader.RSS.RSSItem;
 
 public class RSSItemsAdapter extends RecyclerView.Adapter< RSSItemsAdapter.ViewHolder> {
     private List<RSSItem> rssItemList;

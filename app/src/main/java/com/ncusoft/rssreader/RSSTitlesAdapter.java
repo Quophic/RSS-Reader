@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-import RSS.RSSInfo;
+import com.ncusoft.rssreader.RSS.RSSInfo;
 
 public class RSSTitlesAdapter extends RecyclerView.Adapter<RSSTitlesAdapter.ViewHolder> {
     private List<RSSInfo> rssInfoList;

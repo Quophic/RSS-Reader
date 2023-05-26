@@ -8,8 +8,8 @@ import android.os.Bundle;
 
 import java.util.List;
 
-import RSS.RSSInfo;
-import RSS.RSSUtils;
+import com.ncusoft.rssreader.RSS.RSSInfo;
+import com.ncusoft.rssreader.RSS.RSSUtils;
 
 public class MainActivity extends AppCompatActivity {
     private static final String[] RSS_URLS = {

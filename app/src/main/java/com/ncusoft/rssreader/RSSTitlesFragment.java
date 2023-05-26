@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 
 import java.util.List;
 
-import RSS.RSSInfo;
+import com.ncusoft.rssreader.RSS.RSSInfo;
 
 
 public class RSSTitlesFragment extends Fragment {

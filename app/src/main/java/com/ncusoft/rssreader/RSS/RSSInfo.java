@@ -1,4 +1,4 @@
-package RSS;
+package com.ncusoft.rssreader.RSS;
 
 import java.util.ArrayList;
 import java.util.List;
