@@ -11,14 +11,15 @@ import android.view.ViewGroup;
 
 import java.util.List;
 
+import com.ncusoft.rssreader.DataBase.SubscribedRSSInfo;
 import com.ncusoft.rssreader.RSS.RSSInfo;
 
 
 public class RSSTitlesFragment extends Fragment {
-    private List<RSSInfo> rssInfoList;
+    private List<SubscribedRSSInfo> infoList;
     private RecyclerView rvRSSTitles;
-    public void setRssInfoList(List<RSSInfo> rssInfoList) {
-        this.rssInfoList = rssInfoList;
+    public RSSTitlesFragment(List<SubscribedRSSInfo> infoList){
+        this.infoList = infoList;
     }
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -31,7 +32,7 @@ public class RSSTitlesFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_rss_titles, container, false);
         rvRSSTitles = view.findViewById(R.id.rv_rss_titles);
         rvRSSTitles.setLayoutManager(new LinearLayoutManager(view.getContext()));
-        rvRSSTitles.setAdapter(new RSSTitlesAdapter(rssInfoList, getContext()));
+        rvRSSTitles.setAdapter(new RSSTitlesAdapter(infoList, getContext()));
         return view;
     }
 }

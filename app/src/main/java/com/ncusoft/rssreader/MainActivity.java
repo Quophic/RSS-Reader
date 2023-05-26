@@ -8,24 +8,29 @@ import android.os.Bundle;
 
 import java.util.List;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.ncusoft.rssreader.DataBase.DBManager;
+import com.ncusoft.rssreader.DataBase.SubscribedRSSInfo;
 import com.ncusoft.rssreader.RSS.RSSInfo;
 import com.ncusoft.rssreader.RSS.RSSUtils;
 
 public class MainActivity extends AppCompatActivity {
-    private static final String[] RSS_URLS = {
-            "http://www.people.com.cn/rss/politics.xml",
-            "http://www.people.com.cn/rss/world.xml",
-            "http://www.people.com.cn/rss/finance.xml",
-            "http://www.people.com.cn/rss/sports.xml"
-    };
-    private List<RSSInfo> rssInfoList;
+    private List<SubscribedRSSInfo> infoList;
+    private FloatingActionButton fabAdd;
     private RSSTitlesFragment rssTitlesFragment;
+    private DBManager manager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        rssTitlesFragment = new RSSTitlesFragment();
-        new RSSTask().execute();
+        manager = new DBManager(this);
+        infoList = manager.getAllSubscribedRSS();
+        rssTitlesFragment = new RSSTitlesFragment(infoList);
+        fabAdd = findViewById(R.id.fab_add);
+        fabAdd.setOnClickListener(v -> {
+            new InputDialog(MainActivity.this, manager).show();
+        });
+        startFragment(rssTitlesFragment);
     }
 
     public void startFragment(Fragment fragment){
@@ -34,23 +39,5 @@ public class MainActivity extends AppCompatActivity {
                 .replace(R.id.f_rss_title_container, fragment)
                 .addToBackStack(null)
                 .commit();
-    }
-    class RSSTask extends AsyncTask<List<RSSInfo>, Void, List<RSSInfo>> {
-
-        @Override
-        protected List<RSSInfo> doInBackground(List<RSSInfo>... lists) {
-            try {
-                return RSSUtils.getRSSInfoFromUrl(RSS_URLS);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-        @Override
-        protected void onPostExecute(List<RSSInfo> list) {
-            MainActivity.this.rssInfoList = list;
-            rssTitlesFragment.setRssInfoList(list);
-            startFragment(rssTitlesFragment);
-        }
     }
 }

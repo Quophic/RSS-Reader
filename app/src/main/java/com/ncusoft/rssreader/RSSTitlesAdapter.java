@@ -1,6 +1,7 @@
 package com.ncusoft.rssreader;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,13 +12,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+import com.ncusoft.rssreader.DataBase.SubscribedRSSInfo;
 import com.ncusoft.rssreader.RSS.RSSInfo;
 
 public class RSSTitlesAdapter extends RecyclerView.Adapter<RSSTitlesAdapter.ViewHolder> {
-    private List<RSSInfo> rssInfoList;
+    private List<SubscribedRSSInfo> infoList;
     private MainActivity mainActivity;
-    public RSSTitlesAdapter(List<RSSInfo> rssInfoList, Context context){
-        this.rssInfoList = rssInfoList;
+    public RSSTitlesAdapter(List<SubscribedRSSInfo> infoList, Context context){
+        this.infoList = infoList;
         mainActivity = (MainActivity) context;
     }
     @NonNull
@@ -26,9 +28,8 @@ public class RSSTitlesAdapter extends RecyclerView.Adapter<RSSTitlesAdapter.View
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.rss_title, parent, false);
         ViewHolder holder = new ViewHolder(view);
         holder.itemView.setOnClickListener(v -> {
-            RSSInfo info = rssInfoList.get(holder.getAdapterPosition());
-            RSSItemsFragment fragment = new RSSItemsFragment();
-            fragment.setRssInfo(info);
+            SubscribedRSSInfo info = infoList.get(holder.getAdapterPosition());
+            RSSItemsFragment fragment = RSSItemsFragment.newInstance(info);
             mainActivity.startFragment(fragment);
         });
         return holder;
@@ -36,13 +37,14 @@ public class RSSTitlesAdapter extends RecyclerView.Adapter<RSSTitlesAdapter.View
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        RSSInfo info = rssInfoList.get(position);
+        SubscribedRSSInfo info = infoList.get(position);
+        Log.i("Adapter", info.getTitle());
         holder.tvRSSTitle.setText(info.getTitle());
     }
 
     @Override
     public int getItemCount() {
-        return rssInfoList.size();
+        return infoList.size();
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder{

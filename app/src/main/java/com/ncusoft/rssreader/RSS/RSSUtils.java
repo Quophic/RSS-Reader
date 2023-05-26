@@ -1,10 +1,13 @@
 package com.ncusoft.rssreader.RSS;
 
+import android.os.AsyncTask;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -80,17 +83,15 @@ public class RSSUtils {
         }
     }
 
-    public static List<RSSInfo> getRSSInfoFromUrl(String... urlStrings) throws Exception{
-        List<RSSInfo> infoList = new ArrayList<>();
+    public static RSSInfo getRSSInfoFromUrl(String urlString) throws Exception{
         XMLReader xmlReader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
         RSSHandler handler = new RSSHandler();
         xmlReader.setContentHandler(handler);
-        for(String urlString : urlStrings){
-            URL url = new URL(urlString);
-            xmlReader.parse(new InputSource(url.openStream()));
-            infoList.add(handler.getRssInfo());
-        }
-        return infoList;
+        URL url = new URL(urlString);
+        xmlReader.parse(new InputSource(url.openStream()));
+        return handler.getRssInfo();
     }
+
+
 
 }
