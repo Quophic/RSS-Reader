@@ -65,6 +65,7 @@ public class InputDialog extends Dialog {
             info.setTitle(rssInfo.getTitle());
             info.setLink(link);
             manager.add(info);
+            manager.close();
             dismiss();
         }
     }

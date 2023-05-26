@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 
 import java.util.List;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.ncusoft.rssreader.DataBase.DBManager;
 import com.ncusoft.rssreader.DataBase.SubscribedRSSInfo;
 import com.ncusoft.rssreader.RSS.RSSInfo;
@@ -19,6 +20,7 @@ import com.ncusoft.rssreader.RSS.RSSInfo;
 public class RSSTitlesFragment extends Fragment {
     private List<SubscribedRSSInfo> infoList;
     private RecyclerView rvRSSTitles;
+    private FloatingActionButton fabAdd;
     public RSSTitlesFragment(){
     }
     @Override
@@ -36,6 +38,10 @@ public class RSSTitlesFragment extends Fragment {
         rvRSSTitles = view.findViewById(R.id.rv_rss_titles);
         rvRSSTitles.setLayoutManager(new LinearLayoutManager(view.getContext()));
         rvRSSTitles.setAdapter(new RSSTitlesAdapter(infoList, getContext()));
+        fabAdd = view.findViewById(R.id.fab_add);
+        fabAdd.setOnClickListener(v -> {
+            new InputDialog(getContext()).show();
+        });
         return view;
     }
 }

@@ -22,10 +22,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         manager = new DBManager(this);
-        fabAdd = findViewById(R.id.fab_add);
-        fabAdd.setOnClickListener(v -> {
-            new InputDialog(MainActivity.this).show();
-        });
+
     }
     public void startFragment(Fragment fragment){
         getSupportFragmentManager()
