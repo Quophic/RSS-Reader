@@ -1,6 +1,6 @@
 package com.ncusoft.rssreader;
 
-import android.app.AlertDialog;
+
 import android.app.Dialog;
 import android.content.Context;
 import android.os.AsyncTask;

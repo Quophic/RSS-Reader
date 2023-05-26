@@ -1,6 +1,6 @@
 package com.ncusoft.rssreader;
 
-import android.app.WallpaperManager;
+
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;

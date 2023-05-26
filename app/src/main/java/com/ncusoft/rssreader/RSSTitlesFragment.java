@@ -1,6 +1,6 @@
 package com.ncusoft.rssreader;
 
-import android.content.Context;
+
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -19,7 +19,7 @@ import java.util.List;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.ncusoft.rssreader.DataBase.DBManager;
 import com.ncusoft.rssreader.DataBase.SubscribedRSSInfo;
-import com.ncusoft.rssreader.RSS.RSSInfo;
+
 
 
 public class RSSTitlesFragment extends Fragment {
