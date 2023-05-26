@@ -23,9 +23,9 @@ public class InputDialog extends Dialog {
     private Button btnCancel;
     private Button btnOk;
     private DBManager manager;
-    public InputDialog(@NonNull Context context, DBManager manager) {
+    public InputDialog(@NonNull Context context) {
         super(context);
-        this.manager = manager;
+        manager = new DBManager(getContext());
     }
 
     @Override

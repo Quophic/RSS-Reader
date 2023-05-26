@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 
 import java.util.List;
 
+import com.ncusoft.rssreader.DataBase.DBManager;
 import com.ncusoft.rssreader.DataBase.SubscribedRSSInfo;
 import com.ncusoft.rssreader.RSS.RSSInfo;
 
@@ -18,12 +19,14 @@ import com.ncusoft.rssreader.RSS.RSSInfo;
 public class RSSTitlesFragment extends Fragment {
     private List<SubscribedRSSInfo> infoList;
     private RecyclerView rvRSSTitles;
-    public RSSTitlesFragment(List<SubscribedRSSInfo> infoList){
-        this.infoList = infoList;
+    public RSSTitlesFragment(){
     }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        DBManager manager = new DBManager(getContext());
+        infoList = manager.getAllSubscribedRSS();
+        manager.close();
     }
 
     @Override
