@@ -1,6 +1,7 @@
 package com.ncusoft.rssreader;
 
 
+import android.app.AlertDialog;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -84,9 +85,16 @@ public class RSSTitlesFragment extends Fragment {
                         adapter.notifyDataSetChanged();
                         break;
                     case MSG_DELETE:
-                        manager.delete(infoList.get(position));
-                        infoList.remove(position);
-                        adapter.notifyDataSetChanged();
+                        new AlertDialog.Builder(getContext())
+                                .setTitle("确定要删除吗？")
+                                .setNegativeButton("否", (dialog, which) -> {})
+                                .setPositiveButton("是", ((dialog, which) -> {
+                                    manager.delete(infoList.get(position));
+                                    infoList.remove(position);
+                                    adapter.notifyDataSetChanged();
+                                }))
+                                .create()
+                                .show();
                         break;
                 }
             }
