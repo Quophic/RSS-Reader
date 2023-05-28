@@ -7,6 +7,7 @@ public class RSSInfo{
     private String title;
     private String link;
     private String description;
+    private String imageUrl;
     private List<RSSItem> items = new ArrayList<>();
 
     public String getTitle() {
@@ -31,6 +32,13 @@ public class RSSInfo{
 
     public void setDescription(String description) {
         this.description = description;
+    }
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     public List<RSSItem> getItems() {

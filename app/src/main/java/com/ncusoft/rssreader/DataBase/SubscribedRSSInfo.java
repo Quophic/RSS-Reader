@@ -1,10 +1,13 @@
 package com.ncusoft.rssreader.DataBase;
 
+import android.graphics.Bitmap;
+
 import java.io.Serializable;
 
 public class SubscribedRSSInfo implements Serializable {
     private String title;
     private String link;
+    private Bitmap image;
     public SubscribedRSSInfo(){}
     public SubscribedRSSInfo(String title, String link){
         setTitle(title);
@@ -25,5 +28,13 @@ public class SubscribedRSSInfo implements Serializable {
 
     public void setLink(String link) {
         this.link = link;
+    }
+
+    public Bitmap getImage() {
+        return image;
+    }
+
+    public void setImage(Bitmap image) {
+        this.image = image;
     }
 }

@@ -4,7 +4,10 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +24,8 @@ public class DBManager {
         list = new ArrayList<>();
         String[] columns = {
                 TableContract.TITLE,
-                TableContract.LINK
+                TableContract.LINK,
+                TableContract.IMAGE
         };
         Cursor cursor = db.query(
                 TableContract.TABLE_NAME,
@@ -36,6 +40,11 @@ public class DBManager {
             SubscribedRSSInfo info = new SubscribedRSSInfo();
             info.setTitle(cursor.getString(0));
             info.setLink(cursor.getString(1));
+            byte[] bytes = cursor.getBlob(2);
+            if(bytes != null){
+                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                info.setImage(bitmap);
+            }
             list.add(info);
         }
         cursor.close();
@@ -49,6 +58,11 @@ public class DBManager {
         ContentValues values = new ContentValues();
         values.put(TableContract.TITLE, info.getTitle());
         values.put(TableContract.LINK, info.getLink());
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        info.getImage().compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+        values.put(TableContract.IMAGE, outputStream.toByteArray());
+
         db.insert(TableContract.TABLE_NAME, null, values);
         list.add(info);
     }

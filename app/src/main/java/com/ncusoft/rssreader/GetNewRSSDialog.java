@@ -3,6 +3,7 @@ package com.ncusoft.rssreader;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,6 +14,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.loader.content.AsyncTaskLoader;
 
 import com.ncusoft.rssreader.DataBase.DBManager;
 import com.ncusoft.rssreader.DataBase.SubscribedRSSInfo;
@@ -45,17 +47,23 @@ public class GetNewRSSDialog extends Dialog {
             new RSSTask(link).execute();
         });
     }
-
-
-    class RSSTask extends AsyncTask<RSSInfo, Void, RSSInfo> {
+    class RSSTask extends AsyncTask<SubscribedRSSInfo, Void, SubscribedRSSInfo> {
         private String link;
         public RSSTask(String link){
             this.link = link;
         }
         @Override
-        protected RSSInfo doInBackground(RSSInfo... rssInfos) {
+        protected SubscribedRSSInfo doInBackground(SubscribedRSSInfo... infos) {
             try {
-                return RSSUtils.getRSSInfoFromUrl(link);
+                RSSInfo rssInfo = RSSUtils.getRSSInfoFromUrl(link);
+                SubscribedRSSInfo info = new SubscribedRSSInfo();
+                if(rssInfo.getImageUrl() != null){
+                    Bitmap bitmap = RSSUtils.getImageFromUrl(rssInfo.getImageUrl());
+                    info.setImage(bitmap);
+                }
+                info.setTitle(rssInfo.getTitle());
+                info.setLink(link);
+                return info;
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -63,14 +71,11 @@ public class GetNewRSSDialog extends Dialog {
         }
 
         @Override
-        protected void onPostExecute(RSSInfo rssInfo) {
-            if(rssInfo == null){
+        protected void onPostExecute(SubscribedRSSInfo info) {
+            if(info == null){
                 Toast.makeText(getContext(), R.string.illegal_RSS_source, Toast.LENGTH_SHORT).show();
                 return;
             }
-            SubscribedRSSInfo info = new SubscribedRSSInfo();
-            info.setTitle(rssInfo.getTitle());
-            info.setLink(link);
             manager.add(info);
             manager.close();
             dismiss();

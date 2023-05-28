@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -70,6 +71,9 @@ public class RSSTitlesFragment extends Fragment {
             SubscribedRSSInfo info = infoList.get(position);
             Log.i("Adapter", info.getTitle());
             holder.tvRSSTitle.setText(info.getTitle());
+            if(info.getImage() != null){
+                holder.ivRSSImage.setImageBitmap(info.getImage());
+            }
         }
 
         @Override
@@ -79,10 +83,12 @@ public class RSSTitlesFragment extends Fragment {
 
         class ViewHolder extends RecyclerView.ViewHolder{
             public TextView tvRSSTitle;
+            public ImageView ivRSSImage;
 
             public ViewHolder(@NonNull View itemView) {
                 super(itemView);
                 tvRSSTitle = itemView.findViewById(R.id.tv_rss_title);
+                ivRSSImage = itemView.findViewById(R.id.iv_rss_image);
             }
         }
     }
