@@ -9,10 +9,6 @@ public class SubscribedRSSInfo implements Serializable {
     private String link;
     private Bitmap image;
     public SubscribedRSSInfo(){}
-    public SubscribedRSSInfo(String title, String link){
-        setTitle(title);
-        setLink(link);
-    }
 
     public String getTitle() {
         return title;
