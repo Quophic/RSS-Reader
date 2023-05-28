@@ -3,15 +3,21 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:layout_margin="10dp">
+    android:layout_margin="20dp">
     <TextView
         android:id="@+id/tv_item_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="20sp"
-
         android:textColor="@color/black"
+        android:layout_marginBottom="5dp"
         android:text="Title"/>
+    <TextView
+        android:id="@+id/tv_pub_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="right"
+        android:text="time"/>
 
 
 </androidx.appcompat.widget.LinearLayoutCompat>

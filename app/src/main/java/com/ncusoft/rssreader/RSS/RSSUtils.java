@@ -14,6 +14,7 @@ import com.rometools.rome.io.XmlReader;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 
 public class RSSUtils {
     public static RSSInfo getRSSInfoFromUrl(String urlString) throws Exception{
@@ -28,6 +29,7 @@ public class RSSUtils {
             RSSItem item = new RSSItem();
             item.setTitle(entry.getTitle());
             item.setLink(entry.getLink());
+            item.setPubDate(entry.getPublishedDate());
             info.getItems().add(item);
         }
         return info;

@@ -1,8 +1,11 @@
 package com.ncusoft.rssreader.RSS;
 
+import java.util.Date;
+
 public class RSSItem {
     private String title;
     private String link;
+    private Date pubDate;
 
     public String getTitle() {
         return title;
@@ -18,5 +21,13 @@ public class RSSItem {
 
     public void setLink(String link) {
         this.link = link;
+    }
+
+    public Date getPubDate() {
+        return pubDate;
+    }
+
+    public void setPubDate(Date pubDate) {
+        this.pubDate = pubDate;
     }
 }

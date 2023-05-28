@@ -20,6 +20,7 @@ import com.ncusoft.rssreader.RSS.RSSInfo;
 import com.ncusoft.rssreader.RSS.RSSItem;
 import com.ncusoft.rssreader.RSS.RSSUtils;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class RSSItemsFragment extends Fragment {
@@ -80,7 +81,7 @@ public class RSSItemsFragment extends Fragment {
     }
 
     class RSSItemsAdapter extends RecyclerView.Adapter< RSSItemsAdapter.ViewHolder> {
-
+        private SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日 E");
         @NonNull
         @Override
         public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -98,6 +99,7 @@ public class RSSItemsFragment extends Fragment {
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             RSSItem item = rssItemList.get(position);
             holder.tvItemTitle.setText(item.getTitle());
+            holder.tvPubDate.setText(format.format(item.getPubDate()));
         }
 
         @Override
@@ -107,10 +109,11 @@ public class RSSItemsFragment extends Fragment {
 
         class ViewHolder extends RecyclerView.ViewHolder{
             public TextView tvItemTitle;
-
+            public TextView tvPubDate;
             public ViewHolder(@NonNull View itemView) {
                 super(itemView);
                 tvItemTitle = itemView.findViewById(R.id.tv_item_title);
+                tvPubDate = itemView.findViewById(R.id.tv_pub_date);
             }
         }
     }
