@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">RSSReader</string>
+    <string name="illegal_RSS_source">不是有效的RSS源</string>
 </resources>

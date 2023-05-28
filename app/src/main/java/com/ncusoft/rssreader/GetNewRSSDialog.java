@@ -9,8 +9,10 @@ import android.util.Log;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 
 import com.ncusoft.rssreader.DataBase.DBManager;
 import com.ncusoft.rssreader.DataBase.SubscribedRSSInfo;
@@ -55,12 +57,17 @@ public class GetNewRSSDialog extends Dialog {
             try {
                 return RSSUtils.getRSSInfoFromUrl(link);
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                e.printStackTrace();
             }
+            return null;
         }
 
         @Override
         protected void onPostExecute(RSSInfo rssInfo) {
+            if(rssInfo == null){
+                Toast.makeText(getContext(), R.string.illegal_RSS_source, Toast.LENGTH_SHORT).show();
+                return;
+            }
             SubscribedRSSInfo info = new SubscribedRSSInfo();
             info.setTitle(rssInfo.getTitle());
             info.setLink(link);
