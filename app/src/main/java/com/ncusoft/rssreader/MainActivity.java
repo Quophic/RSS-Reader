@@ -1,6 +1,7 @@
 package com.ncusoft.rssreader;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
@@ -20,7 +21,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        ActionBar actionBar = getSupportActionBar();
+        if(actionBar != null){
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
     }
     public void startFragment(Fragment fragment){
         getSupportFragmentManager()
@@ -50,5 +54,19 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
         return super.onContextItemSelected(item);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                if(getSupportFragmentManager().getBackStackEntryCount() >= 1){
+                    getSupportFragmentManager().popBackStack();
+                }else{
+                    finish();
+                }
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
