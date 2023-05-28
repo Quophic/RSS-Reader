@@ -7,9 +7,11 @@ import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -27,6 +29,7 @@ public class GetNewRSSDialog extends Dialog {
     private Button btnCancel;
     private Button btnOk;
     private DBManager manager;
+    private ProgressBar progressBar;
     public GetNewRSSDialog(@NonNull Context context) {
         super(context);
         manager = new DBManager(getContext());
@@ -46,12 +49,19 @@ public class GetNewRSSDialog extends Dialog {
             Log.i("input", link);
             new RSSTask(link).execute();
         });
+        progressBar = findViewById(R.id.progress);
     }
     class RSSTask extends AsyncTask<SubscribedRSSInfo, Void, SubscribedRSSInfo> {
         private String link;
         public RSSTask(String link){
             this.link = link;
         }
+
+        @Override
+        protected void onPreExecute() {
+            progressBar.setVisibility(View.VISIBLE);
+        }
+
         @Override
         protected SubscribedRSSInfo doInBackground(SubscribedRSSInfo... infos) {
             try {
@@ -79,6 +89,7 @@ public class GetNewRSSDialog extends Dialog {
             manager.add(info);
             manager.close();
             RSSTitlesFragment.sendRefreshMsg(info);
+            progressBar.setVisibility(View.GONE);
             dismiss();
         }
     }

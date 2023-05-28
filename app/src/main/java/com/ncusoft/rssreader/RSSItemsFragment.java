@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.ncusoft.rssreader.DataBase.SubscribedRSSInfo;
@@ -25,6 +26,7 @@ import java.util.List;
 
 public class RSSItemsFragment extends Fragment {
     private static final String PARAM = "param";
+    private ProgressBar progressBar;
     private RecyclerView rvRSSItems;
     private List<RSSItem> rssItemList = null;
     private SubscribedRSSInfo info;
@@ -53,6 +55,7 @@ public class RSSItemsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_rss_items, container, false);
+        progressBar = view.findViewById(R.id.progress);
         rvRSSItems = view.findViewById(R.id.rv_rss_items);
         rvRSSItems.setLayoutManager(new LinearLayoutManager(view.getContext()));
         if(rssItemList == null){
@@ -68,6 +71,12 @@ public class RSSItemsFragment extends Fragment {
         public RSSTask(String link){
             this.link = link;
         }
+
+        @Override
+        protected void onPreExecute() {
+            progressBar.setVisibility(View.VISIBLE);
+        }
+
         @Override
         protected RSSInfo doInBackground(RSSInfo... rssInfos) {
             try {
@@ -81,6 +90,7 @@ public class RSSItemsFragment extends Fragment {
         protected void onPostExecute(RSSInfo rssInfo) {
             rssItemList = rssInfo.getItems();
             rvRSSItems.setAdapter(new RSSItemsAdapter());
+            progressBar.setVisibility(View.GONE);
         }
     }
 
