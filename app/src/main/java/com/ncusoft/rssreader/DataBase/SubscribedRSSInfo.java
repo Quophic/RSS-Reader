@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import java.io.Serializable;
 
 public class SubscribedRSSInfo implements Serializable {
+    private long id;
     private String title;
     private String link;
     private Bitmap image;
@@ -32,5 +33,13 @@ public class SubscribedRSSInfo implements Serializable {
 
     public void setImage(Bitmap image) {
         this.image = image;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 }

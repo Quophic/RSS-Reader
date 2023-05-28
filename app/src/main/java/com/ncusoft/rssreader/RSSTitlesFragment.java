@@ -29,7 +29,9 @@ import com.ncusoft.rssreader.DataBase.SubscribedRSSInfo;
 
 public class RSSTitlesFragment extends Fragment {
     public static final int MSG_REFRESH = 1;
+    public static final int MSG_DELETE = 2;
     public static final String SUB_RSS_INFO = "sub_rss_info";
+    public static final String POSITION = "position";
     public static void sendRefreshMsg(SubscribedRSSInfo info){
         if(handler == null){
             return;
@@ -41,24 +43,34 @@ public class RSSTitlesFragment extends Fragment {
         message.setData(bundle);
         handler.sendMessage(message);
     }
+
+    public static void sendDeleteMsg(){
+        if(handler == null){
+            return;
+        }
+        Message message = new Message();
+        message.what = RSSTitlesFragment.MSG_DELETE;
+        handler.sendMessage(message);
+    }
     private List<SubscribedRSSInfo> infoList;
     private RecyclerView rvRSSTitles;
     private FloatingActionButton fabAdd;
     private RSSTitlesAdapter adapter;
     private static Handler handler;
+    private DBManager manager;
+    private int position;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        DBManager manager = new DBManager(getContext());
+        manager = new DBManager(getContext());
         infoList = manager.getAllSubscribedRSS();
-        manager.close();
         handler = new Handler(Looper.getMainLooper()){
             @Override
             public void handleMessage(@NonNull Message msg) {
                 super.handleMessage(msg);
+                Bundle bundle = msg.getData();
                 switch (msg.what){
                     case MSG_REFRESH:
-                        Bundle bundle = msg.getData();
                         SubscribedRSSInfo info = null;
                         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
                             info = bundle.getSerializable(SUB_RSS_INFO, SubscribedRSSInfo.class);
@@ -71,6 +83,11 @@ public class RSSTitlesFragment extends Fragment {
                         infoList.add(info);
                         adapter.notifyDataSetChanged();
                         break;
+                    case MSG_DELETE:
+                        manager.delete(infoList.get(position));
+                        infoList.remove(position);
+                        adapter.notifyDataSetChanged();
+                        break;
                 }
             }
         };
@@ -81,6 +98,7 @@ public class RSSTitlesFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_rss_titles, container, false);
         rvRSSTitles = view.findViewById(R.id.rv_rss_titles);
+        registerForContextMenu(rvRSSTitles);
         rvRSSTitles.setLayoutManager(new LinearLayoutManager(view.getContext()));
         adapter = new RSSTitlesAdapter();
         rvRSSTitles.setAdapter(adapter);
@@ -100,6 +118,10 @@ public class RSSTitlesFragment extends Fragment {
         public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.rss_title, parent, false);
             ViewHolder holder = new ViewHolder(view);
+            holder.itemView.setOnLongClickListener(v -> {
+                position = holder.getAdapterPosition();
+                return false;
+            });
             holder.itemView.setOnClickListener(v -> {
                 SubscribedRSSInfo info = infoList.get(holder.getAdapterPosition());
                 RSSItemsFragment fragment = RSSItemsFragment.newInstance(info);

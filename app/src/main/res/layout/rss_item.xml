@@ -16,8 +16,7 @@
         android:id="@+id/tv_pub_date"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="right"
-        android:text="time"/>
+        android:gravity="right"/>
 
 
 </androidx.appcompat.widget.LinearLayoutCompat>

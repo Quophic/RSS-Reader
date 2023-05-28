@@ -103,7 +103,9 @@ public class RSSItemsFragment extends Fragment {
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             RSSItem item = rssItemList.get(position);
             holder.tvItemTitle.setText(item.getTitle());
-            holder.tvPubDate.setText(format.format(item.getPubDate()));
+            if(item.getPubDate() != null){
+                holder.tvPubDate.setText(format.format(item.getPubDate()));
+            }
         }
 
         @Override
