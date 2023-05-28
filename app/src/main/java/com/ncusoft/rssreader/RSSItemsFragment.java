@@ -26,7 +26,7 @@ import java.util.List;
 public class RSSItemsFragment extends Fragment {
     private static final String PARAM = "param";
     private RecyclerView rvRSSItems;
-    private List<RSSItem> rssItemList;
+    private List<RSSItem> rssItemList = null;
     private SubscribedRSSInfo info;
     public static RSSItemsFragment newInstance(SubscribedRSSInfo info) {
 
@@ -55,7 +55,11 @@ public class RSSItemsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_rss_items, container, false);
         rvRSSItems = view.findViewById(R.id.rv_rss_items);
         rvRSSItems.setLayoutManager(new LinearLayoutManager(view.getContext()));
-        new RSSTask(info.getLink()).execute();
+        if(rssItemList == null){
+            new RSSTask(info.getLink()).execute();
+        }else{
+            rvRSSItems.setAdapter(new RSSItemsAdapter());
+        }
         return view;
     }
 

@@ -18,6 +18,7 @@ public class MainActivity extends AppCompatActivity {
                 .beginTransaction()
                 .replace(R.id.f_rss_title_container, fragment)
                 .addToBackStack(null)
+                .setReorderingAllowed(true)
                 .commit();
     }
     @Override
