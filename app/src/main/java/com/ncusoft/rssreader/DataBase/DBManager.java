@@ -60,11 +60,11 @@ public class DBManager {
         ContentValues values = new ContentValues();
         values.put(TableContract.TITLE, info.getTitle());
         values.put(TableContract.LINK, info.getLink());
-
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        info.getImage().compress(Bitmap.CompressFormat.PNG, 100, outputStream);
-        values.put(TableContract.IMAGE, outputStream.toByteArray());
-
+        if(info.getImage() != null){
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            info.getImage().compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+            values.put(TableContract.IMAGE, outputStream.toByteArray());
+        }
         long id = db.insert(TableContract.TABLE_NAME, null, values);
         if(id != -1){
             info.setId(id);

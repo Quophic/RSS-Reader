@@ -24,7 +24,9 @@ public class RSSUtils {
         RSSInfo info = new RSSInfo();
         info.setTitle(feed.getTitle());
         info.setLink(feed.getLink());
-        info.setImageUrl(feed.getImage().getUrl());
+        if(feed.getImage() != null){
+            info.setImageUrl(feed.getImage().getUrl());
+        }
         for(SyndEntry entry : feed.getEntries()){
             RSSItem item = new RSSItem();
             item.setTitle(entry.getTitle());
