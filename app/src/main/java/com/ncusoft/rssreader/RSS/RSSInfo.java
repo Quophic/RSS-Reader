@@ -6,7 +6,6 @@ import java.util.List;
 public class RSSInfo{
     private String title;
     private String link;
-    private String description;
     private String imageUrl;
     private List<RSSItem> items = new ArrayList<>();
 
@@ -24,14 +23,6 @@ public class RSSInfo{
 
     public void setLink(String link) {
         this.link = link;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
     public String getImageUrl() {
         return imageUrl;

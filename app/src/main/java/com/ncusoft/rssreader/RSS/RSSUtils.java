@@ -23,13 +23,11 @@ public class RSSUtils {
         RSSInfo info = new RSSInfo();
         info.setTitle(feed.getTitle());
         info.setLink(feed.getLink());
-        info.setDescription(feed.getDescription());
         info.setImageUrl(feed.getImage().getUrl());
         for(SyndEntry entry : feed.getEntries()){
             RSSItem item = new RSSItem();
             item.setTitle(entry.getTitle());
             item.setLink(entry.getLink());
-            item.setDescription(entry.getDescription().getValue());
             info.getItems().add(item);
         }
         return info;
