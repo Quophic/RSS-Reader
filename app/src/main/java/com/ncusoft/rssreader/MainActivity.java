@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -63,7 +64,14 @@ public class MainActivity extends AppCompatActivity {
                 if(getSupportFragmentManager().getBackStackEntryCount() >= 1){
                     getSupportFragmentManager().popBackStack();
                 }else{
-                    finish();
+                    new AlertDialog.Builder(this)
+                            .setTitle(R.string.exit_question)
+                            .setNegativeButton(R.string.negative, (dialog, which) -> {})
+                            .setPositiveButton(R.string.positive, ((dialog, which) -> {
+                                finish();
+                            }))
+                            .create()
+                            .show();
                 }
                 break;
         }

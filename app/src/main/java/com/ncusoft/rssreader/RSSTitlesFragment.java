@@ -86,9 +86,9 @@ public class RSSTitlesFragment extends Fragment {
                         break;
                     case MSG_DELETE:
                         new AlertDialog.Builder(getContext())
-                                .setTitle("确定要删除吗？")
-                                .setNegativeButton("否", (dialog, which) -> {})
-                                .setPositiveButton("是", ((dialog, which) -> {
+                                .setTitle(R.string.deletion_question)
+                                .setNegativeButton(R.string.negative, (dialog, which) -> {})
+                                .setPositiveButton(R.string.positive, ((dialog, which) -> {
                                     manager.delete(infoList.get(position));
                                     infoList.remove(position);
                                     adapter.notifyDataSetChanged();
