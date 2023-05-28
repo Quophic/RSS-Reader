@@ -84,7 +84,7 @@ public class GetNewRSSDialog extends Dialog {
                 Toast.makeText(getContext(), R.string.illegal_RSS_source, Toast.LENGTH_SHORT).show();
                 return;
             }
-            manager.addSubscribedRSS(info);
+            manager.addRSSSource(info);
             manager.close();
             RSSSourcesFragment.sendRefreshMsg(info);
             progressBar.setVisibility(View.GONE);

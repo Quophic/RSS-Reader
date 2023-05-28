@@ -64,7 +64,7 @@ public class RSSSourcesFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         manager = new DBManager(getContext());
-        infoList = manager.getAllSubscribedRSS();
+        infoList = manager.getAllRSSSources();
         handler = new Handler(Looper.getMainLooper()){
             @Override
             public void handleMessage(@NonNull Message msg) {
@@ -89,7 +89,7 @@ public class RSSSourcesFragment extends Fragment {
                                 .setTitle(R.string.deletion_question)
                                 .setNegativeButton(R.string.negative, (dialog, which) -> {})
                                 .setPositiveButton(R.string.positive, ((dialog, which) -> {
-                                    manager.deleteSubscribedRSS(infoList.get(position));
+                                    manager.deleteRSSSource(infoList.get(position));
                                     infoList.remove(position);
                                     adapter.notifyDataSetChanged();
                                 }))

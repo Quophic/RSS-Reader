@@ -20,10 +20,10 @@ public class DBManager {
     public DBManager(Context context){
         DBHelper helper = new DBHelper(context);
         db = helper.getWritableDatabase();
-        loadAllSubscribedRSS();
+        loadAllRSSSources();
     }
 
-    private void loadAllSubscribedRSS(){
+    private void loadAllRSSSources(){
         list = new ArrayList<>();
         String[] columns = {
                 RSSSourcesContract._ID,
@@ -55,11 +55,11 @@ public class DBManager {
         cursor.close();
     }
 
-    public List<RSSSource> getAllSubscribedRSS() {
+    public List<RSSSource> getAllRSSSources() {
         return list;
     }
 
-    public void addSubscribedRSS(RSSSource info){
+    public void addRSSSource(RSSSource info){
         ContentValues values = new ContentValues();
         values.put(RSSSourcesContract.TITLE, info.getTitle());
         values.put(RSSSourcesContract.LINK, info.getLink());
@@ -75,7 +75,7 @@ public class DBManager {
         }
     }
 
-    public void deleteSubscribedRSS(RSSSource info){
+    public void deleteRSSSource(RSSSource info){
         db.delete(
                 RSSSourcesContract.TABLE_NAME,
                 RSSSourcesContract._ID + " = ?",
