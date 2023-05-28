@@ -15,11 +15,9 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.loader.content.AsyncTaskLoader;
 
 import com.ncusoft.rssreader.DataBase.DBManager;
-import com.ncusoft.rssreader.DataBase.SubscribedRSSInfo;
+import com.ncusoft.rssreader.RSS.RSSSource;
 import com.ncusoft.rssreader.RSS.RSSInfo;
 import com.ncusoft.rssreader.RSS.RSSUtils;
 
@@ -51,7 +49,7 @@ public class GetNewRSSDialog extends Dialog {
         });
         progressBar = findViewById(R.id.progress);
     }
-    class RSSTask extends AsyncTask<SubscribedRSSInfo, Void, SubscribedRSSInfo> {
+    class RSSTask extends AsyncTask<RSSSource, Void, RSSSource> {
         private String link;
         public RSSTask(String link){
             this.link = link;
@@ -63,15 +61,15 @@ public class GetNewRSSDialog extends Dialog {
         }
 
         @Override
-        protected SubscribedRSSInfo doInBackground(SubscribedRSSInfo... infos) {
+        protected RSSSource doInBackground(RSSSource... infos) {
             try {
                 RSSInfo rssInfo = RSSUtils.getRSSInfoFromUrl(link);
-                SubscribedRSSInfo info = new SubscribedRSSInfo();
-                if(rssInfo.getImageUrl() != null){
-                    Bitmap bitmap = RSSUtils.getImageFromUrl(rssInfo.getImageUrl());
+                RSSSource info = new RSSSource();
+                if(rssInfo.getSource().getImageUrl() != null){
+                    Bitmap bitmap = RSSUtils.getImageFromUrl(rssInfo.getSource().getImageUrl());
                     info.setImage(bitmap);
                 }
-                info.setTitle(rssInfo.getTitle());
+                info.setTitle(rssInfo.getSource().getTitle());
                 info.setLink(link);
                 return info;
             } catch (Exception e) {
@@ -81,14 +79,14 @@ public class GetNewRSSDialog extends Dialog {
         }
 
         @Override
-        protected void onPostExecute(SubscribedRSSInfo info) {
+        protected void onPostExecute(RSSSource info) {
             if(info == null){
                 Toast.makeText(getContext(), R.string.illegal_RSS_source, Toast.LENGTH_SHORT).show();
                 return;
             }
-            manager.add(info);
+            manager.addSubscribedRSS(info);
             manager.close();
-            RSSTitlesFragment.sendRefreshMsg(info);
+            RSSSourcesFragment.sendRefreshMsg(info);
             progressBar.setVisibility(View.GONE);
             dismiss();
         }

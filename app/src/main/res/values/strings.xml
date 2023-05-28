@@ -5,4 +5,5 @@
     <string name="exit_question">确定要退出程序吗</string>
     <string name="positive">是</string>
     <string name="negative">否</string>
+    <string name="not_read">未读</string>
 </resources>

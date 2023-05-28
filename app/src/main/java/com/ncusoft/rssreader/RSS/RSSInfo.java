@@ -4,32 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RSSInfo{
-    private String title;
-    private String link;
-    private String imageUrl;
+    private RSSSource source;
     private List<RSSItem> items = new ArrayList<>();
 
-    public String getTitle() {
-        return title;
+    public RSSSource getSource() {
+        return source;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getLink() {
-        return link;
-    }
-
-    public void setLink(String link) {
-        this.link = link;
-    }
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setSource(RSSSource source) {
+        this.source = source;
     }
 
     public List<RSSItem> getItems() {

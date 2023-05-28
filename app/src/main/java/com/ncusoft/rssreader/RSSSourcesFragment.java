@@ -24,23 +24,23 @@ import java.util.List;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.ncusoft.rssreader.DataBase.DBManager;
-import com.ncusoft.rssreader.DataBase.SubscribedRSSInfo;
+import com.ncusoft.rssreader.RSS.RSSSource;
 
 
 
-public class RSSTitlesFragment extends Fragment {
+public class RSSSourcesFragment extends Fragment {
     public static final int MSG_REFRESH = 1;
     public static final int MSG_DELETE = 2;
     public static final String SUB_RSS_INFO = "sub_rss_info";
     public static final String POSITION = "position";
-    public static void sendRefreshMsg(SubscribedRSSInfo info){
+    public static void sendRefreshMsg(RSSSource info){
         if(handler == null){
             return;
         }
         Message message = new Message();
-        message.what = RSSTitlesFragment.MSG_REFRESH;
+        message.what = RSSSourcesFragment.MSG_REFRESH;
         Bundle bundle = new Bundle();
-        bundle.putSerializable(RSSTitlesFragment.SUB_RSS_INFO, info);
+        bundle.putSerializable(RSSSourcesFragment.SUB_RSS_INFO, info);
         message.setData(bundle);
         handler.sendMessage(message);
     }
@@ -50,10 +50,10 @@ public class RSSTitlesFragment extends Fragment {
             return;
         }
         Message message = new Message();
-        message.what = RSSTitlesFragment.MSG_DELETE;
+        message.what = RSSSourcesFragment.MSG_DELETE;
         handler.sendMessage(message);
     }
-    private List<SubscribedRSSInfo> infoList;
+    private List<RSSSource> infoList;
     private RecyclerView rvRSSTitles;
     private FloatingActionButton fabAdd;
     private RSSTitlesAdapter adapter;
@@ -72,9 +72,9 @@ public class RSSTitlesFragment extends Fragment {
                 Bundle bundle = msg.getData();
                 switch (msg.what){
                     case MSG_REFRESH:
-                        SubscribedRSSInfo info = null;
+                        RSSSource info = null;
                         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-                            info = bundle.getSerializable(SUB_RSS_INFO, SubscribedRSSInfo.class);
+                            info = bundle.getSerializable(SUB_RSS_INFO, RSSSource.class);
                         }else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                             info = bundle.getSerializable(SUB_RSS_INFO, null);
                         }
@@ -89,7 +89,7 @@ public class RSSTitlesFragment extends Fragment {
                                 .setTitle(R.string.deletion_question)
                                 .setNegativeButton(R.string.negative, (dialog, which) -> {})
                                 .setPositiveButton(R.string.positive, ((dialog, which) -> {
-                                    manager.delete(infoList.get(position));
+                                    manager.deleteSubscribedRSS(infoList.get(position));
                                     infoList.remove(position);
                                     adapter.notifyDataSetChanged();
                                 }))
@@ -104,7 +104,7 @@ public class RSSTitlesFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_rss_titles, container, false);
+        View view = inflater.inflate(R.layout.fragment_rss_sources, container, false);
         rvRSSTitles = view.findViewById(R.id.rv_rss_titles);
         registerForContextMenu(rvRSSTitles);
         rvRSSTitles.setLayoutManager(new LinearLayoutManager(view.getContext()));
@@ -124,14 +124,14 @@ public class RSSTitlesFragment extends Fragment {
         @NonNull
         @Override
         public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.rss_title, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.rss_source, parent, false);
             ViewHolder holder = new ViewHolder(view);
             holder.itemView.setOnLongClickListener(v -> {
                 position = holder.getAdapterPosition();
                 return false;
             });
             holder.itemView.setOnClickListener(v -> {
-                SubscribedRSSInfo info = infoList.get(holder.getAdapterPosition());
+                RSSSource info = infoList.get(holder.getAdapterPosition());
                 RSSItemsFragment fragment = RSSItemsFragment.newInstance(info);
                 ((MainActivity)getActivity()).startFragment(fragment);
             });
@@ -140,7 +140,7 @@ public class RSSTitlesFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            SubscribedRSSInfo info = infoList.get(position);
+            RSSSource info = infoList.get(position);
             Log.i("Adapter", info.getTitle());
             holder.tvRSSTitle.setText(info.getTitle());
             if(info.getImage() != null){

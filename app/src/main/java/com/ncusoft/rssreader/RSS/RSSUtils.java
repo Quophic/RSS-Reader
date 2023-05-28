@@ -22,11 +22,13 @@ public class RSSUtils {
         SyndFeedInput input = new SyndFeedInput();
         SyndFeed feed = input.build(new XmlReader(url));
         RSSInfo info = new RSSInfo();
-        info.setTitle(feed.getTitle());
-        info.setLink(feed.getLink());
+        RSSSource source = new RSSSource();
+        source.setTitle(feed.getTitle());
+        source.setLink(feed.getLink());
         if(feed.getImage() != null){
-            info.setImageUrl(feed.getImage().getUrl());
+            source.setImageUrl(feed.getImage().getUrl());
         }
+        info.setSource(source);
         for(SyndEntry entry : feed.getEntries()){
             RSSItem item = new RSSItem();
             item.setTitle(entry.getTitle());

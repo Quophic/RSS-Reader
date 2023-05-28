@@ -6,6 +6,7 @@ public class RSSItem {
     private String title;
     private String link;
     private Date pubDate;
+    private int status;
 
     public String getTitle() {
         return title;
@@ -29,5 +30,13 @@ public class RSSItem {
 
     public void setPubDate(Date pubDate) {
         this.pubDate = pubDate;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 }

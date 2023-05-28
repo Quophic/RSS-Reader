@@ -16,7 +16,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.ncusoft.rssreader.DataBase.SubscribedRSSInfo;
+import com.ncusoft.rssreader.RSS.RSSSource;
 import com.ncusoft.rssreader.RSS.RSSInfo;
 import com.ncusoft.rssreader.RSS.RSSItem;
 import com.ncusoft.rssreader.RSS.RSSUtils;
@@ -29,8 +29,8 @@ public class RSSItemsFragment extends Fragment {
     private ProgressBar progressBar;
     private RecyclerView rvRSSItems;
     private List<RSSItem> rssItemList = null;
-    private SubscribedRSSInfo info;
-    public static RSSItemsFragment newInstance(SubscribedRSSInfo info) {
+    private RSSSource info;
+    public static RSSItemsFragment newInstance(RSSSource info) {
 
         Bundle args = new Bundle();
         args.putSerializable(PARAM, info);
@@ -44,7 +44,7 @@ public class RSSItemsFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if(getArguments() != null){
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                info = getArguments().getSerializable(PARAM, SubscribedRSSInfo.class);
+                info = getArguments().getSerializable(PARAM, RSSSource.class);
             }else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 info = getArguments().getSerializable(PARAM, null);
             }
