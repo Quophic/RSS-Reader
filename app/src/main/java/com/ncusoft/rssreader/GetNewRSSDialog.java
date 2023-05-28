@@ -78,6 +78,7 @@ public class GetNewRSSDialog extends Dialog {
             }
             manager.add(info);
             manager.close();
+            RSSTitlesFragment.sendRefreshMsg(info);
             dismiss();
         }
     }
