@@ -64,7 +64,7 @@ public class RSSSourcesFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         manager = new DBManager(getContext());
-        infoList = manager.getAllRSSSources();
+        infoList = manager.getRSSSourceList();
         handler = new Handler(Looper.getMainLooper()){
             @Override
             public void handleMessage(@NonNull Message msg) {

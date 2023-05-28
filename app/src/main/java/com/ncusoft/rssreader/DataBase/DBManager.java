@@ -1,21 +1,27 @@
 package com.ncusoft.rssreader.DataBase;
 
+import android.app.Service;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.IBinder;
+
+import androidx.annotation.Nullable;
 
 import com.ncusoft.rssreader.DataBase.Contract.RSSSourcesContract;
+import com.ncusoft.rssreader.RSS.RSSItem;
 import com.ncusoft.rssreader.RSS.RSSSource;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DBManager {
-    private List<RSSSource> list;
+public class DBManager{
+    private List<RSSSource> rssSourceList;
     private SQLiteDatabase db;
     public DBManager(Context context){
         DBHelper helper = new DBHelper(context);
@@ -24,7 +30,7 @@ public class DBManager {
     }
 
     private void loadAllRSSSources(){
-        list = new ArrayList<>();
+        rssSourceList = new ArrayList<>();
         String[] columns = {
                 RSSSourcesContract._ID,
                 RSSSourcesContract.TITLE,
@@ -50,36 +56,43 @@ public class DBManager {
                 Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                 info.setImage(bitmap);
             }
-            list.add(info);
+            rssSourceList.add(info);
         }
         cursor.close();
     }
 
-    public List<RSSSource> getAllRSSSources() {
-        return list;
+    public List<RSSSource> getRSSSourceList() {
+        return rssSourceList;
     }
 
-    public void addRSSSource(RSSSource info){
+
+
+    public List<RSSSource> insertRSSSource(RSSSource source){
         ContentValues values = new ContentValues();
-        values.put(RSSSourcesContract.TITLE, info.getTitle());
-        values.put(RSSSourcesContract.LINK, info.getLink());
-        if(info.getImage() != null){
+        values.put(RSSSourcesContract.TITLE, source.getTitle());
+        values.put(RSSSourcesContract.LINK, source.getLink());
+        if(source.getImage() != null){
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            info.getImage().compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+            source.getImage().compress(Bitmap.CompressFormat.PNG, 100, outputStream);
             values.put(RSSSourcesContract.IMAGE, outputStream.toByteArray());
         }
         long id = db.insert(RSSSourcesContract.TABLE_NAME, null, values);
         if(id != -1){
-            info.setId(id);
-            list.add(info);
+            source.setId(id);
+            rssSourceList.add(source);
         }
+        return rssSourceList;
     }
 
-    public void deleteRSSSource(RSSSource info){
-        db.delete(
+    public List<RSSSource> deleteRSSSource(RSSSource source){
+        int result = db.delete(
                 RSSSourcesContract.TABLE_NAME,
                 RSSSourcesContract._ID + " = ?",
-                new String[]{String.valueOf(info.getId())});
+                new String[]{String.valueOf(source.getId())});
+        if(result == 1){
+            rssSourceList.remove(source);
+        }
+        return rssSourceList;
     }
 
     public void close(){
