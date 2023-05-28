@@ -32,7 +32,6 @@ public class RSSSourcesFragment extends Fragment {
     public static final int MSG_REFRESH = 1;
     public static final int MSG_DELETE = 2;
     public static final String SUB_RSS_INFO = "sub_rss_info";
-    public static final String POSITION = "position";
     public static void sendRefreshMsg(RSSSource info){
         if(handler == null){
             return;
@@ -53,7 +52,7 @@ public class RSSSourcesFragment extends Fragment {
         message.what = RSSSourcesFragment.MSG_DELETE;
         handler.sendMessage(message);
     }
-    private List<RSSSource> infoList;
+    private List<RSSSource> rssSourceList;
     private RecyclerView rvRSSTitles;
     private FloatingActionButton fabAdd;
     private RSSTitlesAdapter adapter;
@@ -64,7 +63,7 @@ public class RSSSourcesFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         manager = new DBManager(getContext());
-        infoList = manager.getRSSSourceList();
+        rssSourceList = manager.getRSSSourceList();
         handler = new Handler(Looper.getMainLooper()){
             @Override
             public void handleMessage(@NonNull Message msg) {
@@ -81,7 +80,7 @@ public class RSSSourcesFragment extends Fragment {
                         if(info == null){
                             return;
                         }
-                        infoList.add(info);
+                        rssSourceList.add(info);
                         adapter.notifyDataSetChanged();
                         break;
                     case MSG_DELETE:
@@ -89,8 +88,8 @@ public class RSSSourcesFragment extends Fragment {
                                 .setTitle(R.string.deletion_question)
                                 .setNegativeButton(R.string.negative, (dialog, which) -> {})
                                 .setPositiveButton(R.string.positive, ((dialog, which) -> {
-                                    manager.deleteRSSSource(infoList.get(position));
-                                    infoList.remove(position);
+                                    manager.deleteRSSSource(rssSourceList.get(position));
+                                    rssSourceList.remove(position);
                                     adapter.notifyDataSetChanged();
                                 }))
                                 .create()
@@ -131,7 +130,7 @@ public class RSSSourcesFragment extends Fragment {
                 return false;
             });
             holder.itemView.setOnClickListener(v -> {
-                RSSSource info = infoList.get(holder.getAdapterPosition());
+                RSSSource info = rssSourceList.get(holder.getAdapterPosition());
                 RSSItemsFragment fragment = RSSItemsFragment.newInstance(info);
                 ((MainActivity)getActivity()).startFragment(fragment);
             });
@@ -140,7 +139,7 @@ public class RSSSourcesFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            RSSSource info = infoList.get(position);
+            RSSSource info = rssSourceList.get(position);
             Log.i("Adapter", info.getTitle());
             holder.tvRSSTitle.setText(info.getTitle());
             if(info.getImage() != null){
@@ -150,7 +149,7 @@ public class RSSSourcesFragment extends Fragment {
 
         @Override
         public int getItemCount() {
-            return infoList.size();
+            return rssSourceList.size();
         }
 
         class ViewHolder extends RecyclerView.ViewHolder{
