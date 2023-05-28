@@ -43,7 +43,7 @@ public class RSSTitlesFragment extends Fragment {
         rvRSSTitles.setAdapter(new RSSTitlesAdapter());
         fabAdd = view.findViewById(R.id.fab_add);
         fabAdd.setOnClickListener(v -> {
-            new InputDialog(getContext()).show();
+            new GetNewRSSDialog(getContext()).show();
         });
         return view;
     }

@@ -18,12 +18,12 @@ import com.ncusoft.rssreader.RSS.RSSInfo;
 import com.ncusoft.rssreader.RSS.RSSUtils;
 
 
-public class InputDialog extends Dialog {
+public class GetNewRSSDialog extends Dialog {
     private EditText etInput;
     private Button btnCancel;
     private Button btnOk;
     private DBManager manager;
-    public InputDialog(@NonNull Context context) {
+    public GetNewRSSDialog(@NonNull Context context) {
         super(context);
         manager = new DBManager(getContext());
     }
