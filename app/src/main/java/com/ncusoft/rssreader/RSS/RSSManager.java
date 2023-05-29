@@ -98,6 +98,10 @@ public class RSSManager extends Service implements RSSManagerInterface {
                 new String[]{String.valueOf(source.getId())});
         if(result == 1){
             rssSourceList.remove(source);
+            db.delete(
+                    RSSItemsContract.TABLE_NAME,
+                    RSSItemsContract.SOURCE_ID + " = ?",
+                    new String[]{String.valueOf(source.getId())});
         }
         return rssSourceList;
     }
