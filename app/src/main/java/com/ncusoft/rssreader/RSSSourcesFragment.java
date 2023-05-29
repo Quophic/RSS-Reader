@@ -2,6 +2,7 @@ package com.ncusoft.rssreader;
 
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -23,33 +24,31 @@ import android.widget.TextView;
 import java.util.List;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.ncusoft.rssreader.DataBase.DBManager;
+import com.ncusoft.rssreader.RSS.RSSManager;
+import com.ncusoft.rssreader.RSS.RSSManagerInterface;
 import com.ncusoft.rssreader.RSS.RSSSource;
 
 
 
 public class RSSSourcesFragment extends Fragment {
-    public static final int MSG_REFRESH = 1;
-    public static final int MSG_DELETE = 2;
-    public static final String SUB_RSS_INFO = "sub_rss_info";
-    public static void sendRefreshMsg(RSSSource info){
+    public static final int MSG_ADD_RSS_SOURCE = 1;
+    public static final int MSG_DELETE_RSS_SOURCE = 2;
+    public static final String RSS_SOURCE = "rss_source";
+    public static void sendAddRSSSourceMsg(){
         if(handler == null){
             return;
         }
         Message message = new Message();
-        message.what = RSSSourcesFragment.MSG_REFRESH;
-        Bundle bundle = new Bundle();
-        bundle.putSerializable(RSSSourcesFragment.SUB_RSS_INFO, info);
-        message.setData(bundle);
+        message.what = RSSSourcesFragment.MSG_ADD_RSS_SOURCE;
         handler.sendMessage(message);
     }
 
-    public static void sendDeleteMsg(){
+    public static void sendDeleteRSSSourceMsg(){
         if(handler == null){
             return;
         }
         Message message = new Message();
-        message.what = RSSSourcesFragment.MSG_DELETE;
+        message.what = RSSSourcesFragment.MSG_DELETE_RSS_SOURCE;
         handler.sendMessage(message);
     }
     private List<RSSSource> rssSourceList;
@@ -57,39 +56,37 @@ public class RSSSourcesFragment extends Fragment {
     private FloatingActionButton fabAdd;
     private RSSTitlesAdapter adapter;
     private static Handler handler;
-    private DBManager manager;
+    private RSSManagerInterface manager;
     private int position;
+    private MainActivity mainActivity;
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if(context instanceof MainActivity){
+            mainActivity = (MainActivity) context;
+            manager = mainActivity.getManager();
+            rssSourceList = manager.getRSSSourceList();
+        }
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        manager = new DBManager(getContext());
-        rssSourceList = manager.getRSSSourceList();
         handler = new Handler(Looper.getMainLooper()){
             @Override
             public void handleMessage(@NonNull Message msg) {
                 super.handleMessage(msg);
-                Bundle bundle = msg.getData();
                 switch (msg.what){
-                    case MSG_REFRESH:
-                        RSSSource info = null;
-                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-                            info = bundle.getSerializable(SUB_RSS_INFO, RSSSource.class);
-                        }else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                            info = bundle.getSerializable(SUB_RSS_INFO, null);
-                        }
-                        if(info == null){
-                            return;
-                        }
-                        rssSourceList.add(info);
+                    case MSG_ADD_RSS_SOURCE:
                         adapter.notifyDataSetChanged();
                         break;
-                    case MSG_DELETE:
+                    case MSG_DELETE_RSS_SOURCE:
                         new AlertDialog.Builder(getContext())
                                 .setTitle(R.string.deletion_question)
                                 .setNegativeButton(R.string.negative, (dialog, which) -> {})
                                 .setPositiveButton(R.string.positive, ((dialog, which) -> {
                                     manager.deleteRSSSource(rssSourceList.get(position));
-                                    rssSourceList.remove(position);
                                     adapter.notifyDataSetChanged();
                                 }))
                                 .create()
@@ -111,7 +108,7 @@ public class RSSSourcesFragment extends Fragment {
         rvRSSTitles.setAdapter(adapter);
         fabAdd = view.findViewById(R.id.fab_add);
         fabAdd.setOnClickListener(v -> {
-            new GetNewRSSDialog(getContext()).show();
+            new GetNewRSSDialog(mainActivity).show();
         });
         return view;
     }

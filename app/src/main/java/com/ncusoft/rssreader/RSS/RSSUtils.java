@@ -24,7 +24,7 @@ public class RSSUtils {
         RSSInfo info = new RSSInfo();
         RSSSource source = new RSSSource();
         source.setTitle(feed.getTitle());
-        source.setLink(feed.getLink());
+        source.setLink(urlString);
         if(feed.getImage() != null){
             source.setImageUrl(feed.getImage().getUrl());
         }

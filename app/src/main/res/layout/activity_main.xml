@@ -10,8 +10,7 @@
         android:id="@+id/f_rss_title_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:name="com.ncusoft.rssreader.RSSSourcesFragment">
+        android:orientation="vertical">
 
     </androidx.fragment.app.FragmentContainerView>
 

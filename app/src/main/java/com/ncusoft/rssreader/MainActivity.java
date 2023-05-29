@@ -6,14 +6,40 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import android.app.AlertDialog;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.view.ContextMenu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.ncusoft.rssreader.RSS.RSSManager;
+import com.ncusoft.rssreader.RSS.RSSManagerInterface;
+
 
 public class MainActivity extends AppCompatActivity {
+    private RSSManagerInterface manager;
+    private ServiceConnection connection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            manager = ((RSSManager.Binder) service).getDBManager();
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.f_rss_title_container, new RSSSourcesFragment())
+                    .commit();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+        }
+    };
+    public RSSManagerInterface getManager(){
+        return manager;
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
         if(actionBar != null){
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+        Intent intent = new Intent(this, RSSManager.class);
+        bindService(intent, connection, Context.BIND_AUTO_CREATE);
     }
     public void startFragment(Fragment fragment){
         getSupportFragmentManager()
@@ -35,7 +63,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
     }
-
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
@@ -47,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onContextItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.item_delete:
-                RSSSourcesFragment.sendDeleteMsg();
+                RSSSourcesFragment.sendDeleteRSSSourceMsg();
                 break;
         }
         return super.onContextItemSelected(item);

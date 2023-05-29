@@ -16,7 +16,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import com.ncusoft.rssreader.DataBase.DBManager;
+import com.ncusoft.rssreader.RSS.RSSManager;
+import com.ncusoft.rssreader.RSS.RSSManagerInterface;
 import com.ncusoft.rssreader.RSS.RSSSource;
 import com.ncusoft.rssreader.RSS.RSSInfo;
 import com.ncusoft.rssreader.RSS.RSSUtils;
@@ -26,11 +27,11 @@ public class GetNewRSSDialog extends Dialog {
     private EditText etInput;
     private Button btnCancel;
     private Button btnOk;
-    private DBManager manager;
+    private RSSManagerInterface manager;
     private ProgressBar progressBar;
     public GetNewRSSDialog(@NonNull Context context) {
         super(context);
-        manager = new DBManager(getContext());
+        manager = ((MainActivity) context).getManager();
     }
 
     @Override
@@ -49,7 +50,7 @@ public class GetNewRSSDialog extends Dialog {
         });
         progressBar = findViewById(R.id.progress);
     }
-    class RSSTask extends AsyncTask<RSSSource, Void, RSSSource> {
+    class RSSTask extends AsyncTask<RSSInfo, Void, RSSInfo> {
         private String link;
         public RSSTask(String link){
             this.link = link;
@@ -61,17 +62,15 @@ public class GetNewRSSDialog extends Dialog {
         }
 
         @Override
-        protected RSSSource doInBackground(RSSSource... infos) {
+        protected RSSInfo doInBackground(RSSInfo... infos) {
             try {
                 RSSInfo rssInfo = RSSUtils.getRSSInfoFromUrl(link);
-                RSSSource info = new RSSSource();
+                RSSSource source = rssInfo.getSource();
                 if(rssInfo.getSource().getImageUrl() != null){
-                    Bitmap bitmap = RSSUtils.getImageFromUrl(rssInfo.getSource().getImageUrl());
-                    info.setImage(bitmap);
+                    Bitmap bitmap = RSSUtils.getImageFromUrl(source.getImageUrl());
+                    source.setImage(bitmap);
                 }
-                info.setTitle(rssInfo.getSource().getTitle());
-                info.setLink(link);
-                return info;
+                return rssInfo;
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -79,14 +78,14 @@ public class GetNewRSSDialog extends Dialog {
         }
 
         @Override
-        protected void onPostExecute(RSSSource info) {
+        protected void onPostExecute(RSSInfo info) {
             if(info == null){
                 Toast.makeText(getContext(), R.string.illegal_RSS_source, Toast.LENGTH_SHORT).show();
                 return;
             }
-            manager.insertRSSSource(info);
-            manager.close();
-            RSSSourcesFragment.sendRefreshMsg(info);
+            manager.insertRSSSource(info.getSource());
+            manager.insertRSSItems(info);
+            RSSSourcesFragment.sendAddRSSSourceMsg();
             progressBar.setVisibility(View.GONE);
             dismiss();
         }

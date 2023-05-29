@@ -1,6 +1,7 @@
 package com.ncusoft.rssreader;
 
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.ncusoft.rssreader.RSS.RSSManagerInterface;
 import com.ncusoft.rssreader.RSS.RSSSource;
 import com.ncusoft.rssreader.RSS.RSSInfo;
 import com.ncusoft.rssreader.RSS.RSSItem;
@@ -29,7 +31,8 @@ public class RSSItemsFragment extends Fragment {
     private ProgressBar progressBar;
     private RecyclerView rvRSSItems;
     private List<RSSItem> rssItemList = null;
-    private RSSSource info;
+    private RSSSource source;
+    private RSSManagerInterface manager;
     public static RSSItemsFragment newInstance(RSSSource info) {
 
         Bundle args = new Bundle();
@@ -40,13 +43,21 @@ public class RSSItemsFragment extends Fragment {
     }
 
     @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if(context instanceof MainActivity){
+            manager = ((MainActivity)context).getManager();
+        }
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if(getArguments() != null){
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                info = getArguments().getSerializable(PARAM, RSSSource.class);
+                source = getArguments().getSerializable(PARAM, RSSSource.class);
             }else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                info = getArguments().getSerializable(PARAM, null);
+                source = getArguments().getSerializable(PARAM, null);
             }
         }
     }
@@ -58,8 +69,9 @@ public class RSSItemsFragment extends Fragment {
         progressBar = view.findViewById(R.id.progress);
         rvRSSItems = view.findViewById(R.id.rv_rss_items);
         rvRSSItems.setLayoutManager(new LinearLayoutManager(view.getContext()));
+
         if(rssItemList == null){
-            new RSSTask(info.getLink()).execute();
+            new RSSTask(source.getLink()).execute();
         }else{
             rvRSSItems.setAdapter(new RSSItemsAdapter());
         }
@@ -88,7 +100,10 @@ public class RSSItemsFragment extends Fragment {
 
         @Override
         protected void onPostExecute(RSSInfo rssInfo) {
-            rssItemList = rssInfo.getItems();
+            if(rssInfo != null){
+                manager.insertRSSItems(rssInfo);
+            }
+            rssItemList = manager.getRSSItemList(source);
             rvRSSItems.setAdapter(new RSSItemsAdapter());
             progressBar.setVisibility(View.GONE);
         }
