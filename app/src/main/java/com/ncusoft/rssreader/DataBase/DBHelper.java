@@ -19,7 +19,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String SQL_CREATE_RSS_ITEM =
             "CREATE TABLE " + RSSItemsContract.TABLE_NAME + "(" +
                     RSSItemsContract._ID + " INTEGER PRIMARY KEY," +
-                    RSSItemsContract.SOURCE_ID + "INTEGER," +
+                    RSSItemsContract.SOURCE_ID + " INTEGER," +
                     RSSItemsContract.TITLE + " TEXT," +
                     RSSItemsContract.LINK + " TEXT UNIQUE," +
                     RSSItemsContract.PUB_DATE + " INTEGER," +
