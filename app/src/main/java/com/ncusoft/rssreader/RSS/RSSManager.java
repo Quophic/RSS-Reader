@@ -106,6 +106,7 @@ public class RSSManager extends Service implements RSSManagerInterface {
     public List<RSSItem> getRSSItemList(RSSSource source) {
         List<RSSItem> rssItemList = new ArrayList<>();
         String[] columns = {
+                RSSItemsContract._ID,
                 RSSItemsContract.TITLE,
                 RSSItemsContract.LINK,
                 RSSItemsContract.PUB_DATE,
@@ -122,10 +123,11 @@ public class RSSManager extends Service implements RSSManagerInterface {
         );
         for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()){
             RSSItem item = new RSSItem();
-            item.setTitle(cursor.getString(0));
-            item.setLink(cursor.getString(1));
-            item.setPubDate(new Date(cursor.getLong(2)));
-            item.setStatus(cursor.getInt(3));
+            item.setId(cursor.getLong(0));
+            item.setTitle(cursor.getString(1));
+            item.setLink(cursor.getString(2));
+            item.setPubDate(new Date(cursor.getLong(3)));
+            item.setStatus(cursor.getInt(4));
             rssItemList.add(item);
         }
         cursor.close();
@@ -141,12 +143,28 @@ public class RSSManager extends Service implements RSSManagerInterface {
             values.put(RSSItemsContract.LINK, item.getLink());
             values.put(RSSItemsContract.PUB_DATE, String.valueOf(item.getPubDate().getTime()));
             values.put(RSSItemsContract.STATUS, RSSItemsContract.STATUS_NEVER);
-            db.insert(RSSItemsContract.TABLE_NAME, null, values);
+            long result = db.insert(RSSItemsContract.TABLE_NAME, null, values);
+            if(result != -1){
+                item.setId(result);
+            }
         }
     }
 
-    public void close(){
+    @Override
+    public void setRSSItemRead(RSSItem item) {
+        ContentValues values = new ContentValues();
+        values.put(RSSItemsContract.STATUS, RSSItemsContract.STATUS_READ);
+        db.update(
+                RSSItemsContract.TABLE_NAME,
+                values,
+                RSSItemsContract._ID + "=?",
+                new String[]{String.valueOf(item.getId())});
+    }
+
+    @Override
+    public void onDestroy() {
         db.close();
+        super.onDestroy();
     }
 
     @Nullable

@@ -3,10 +3,19 @@ package com.ncusoft.rssreader.RSS;
 import java.util.Date;
 
 public class RSSItem {
+    private long id;
     private String title;
     private String link;
     private Date pubDate;
     private int status;
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 
     public String getTitle() {
         return title;

@@ -8,4 +8,5 @@ public interface RSSManagerInterface {
     List<RSSSource> deleteRSSSource(RSSSource source);
     List<RSSItem> getRSSItemList(RSSSource source);
     void insertRSSItems(RSSInfo info);
+    void setRSSItemRead(RSSItem item);
 }

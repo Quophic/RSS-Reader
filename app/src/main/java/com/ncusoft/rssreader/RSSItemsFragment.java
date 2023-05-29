@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.ncusoft.rssreader.DataBase.Contract.RSSItemsContract;
 import com.ncusoft.rssreader.RSS.RSSManagerInterface;
 import com.ncusoft.rssreader.RSS.RSSSource;
 import com.ncusoft.rssreader.RSS.RSSInfo;
@@ -117,9 +118,11 @@ public class RSSItemsFragment extends Fragment {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.rss_item, parent, false);
             ViewHolder holder = new ViewHolder(view);
             holder.itemView.setOnClickListener(v -> {
-                String url = rssItemList.get(holder.getAdapterPosition()).getLink();
-                WebViewFragment fragment = WebViewFragment.newInstance(url);
+                RSSItem item = rssItemList.get(holder.getAdapterPosition());
+                WebViewFragment fragment = WebViewFragment.newInstance(item.getLink());
                 ((MainActivity)getActivity()).startFragment(fragment);
+                item.setStatus(RSSItemsContract.STATUS_READ);
+                manager.setRSSItemRead(item);
             });
             return holder;
         }
@@ -128,6 +131,9 @@ public class RSSItemsFragment extends Fragment {
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             RSSItem item = rssItemList.get(position);
             holder.tvItemTitle.setText(item.getTitle());
+            if(item.getStatus() == RSSItemsContract.STATUS_NEVER){
+                holder.tvItemStatus.setText(R.string.not_read);
+            }
             if(item.getPubDate() != null){
                 holder.tvPubDate.setText(format.format(item.getPubDate()));
             }
@@ -140,10 +146,12 @@ public class RSSItemsFragment extends Fragment {
 
         class ViewHolder extends RecyclerView.ViewHolder{
             public TextView tvItemTitle;
+            public TextView tvItemStatus;
             public TextView tvPubDate;
             public ViewHolder(@NonNull View itemView) {
                 super(itemView);
                 tvItemTitle = itemView.findViewById(R.id.tv_item_title);
+                tvItemStatus = itemView.findViewById(R.id.tv_item_status);
                 tvPubDate = itemView.findViewById(R.id.tv_pub_date);
             }
         }
