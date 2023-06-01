@@ -127,8 +127,8 @@ public class RSSSourcesFragment extends Fragment {
                 return false;
             });
             holder.itemView.setOnClickListener(v -> {
-                RSSSource info = rssSourceList.get(holder.getAdapterPosition());
-                RSSItemsFragment fragment = RSSItemsFragment.newInstance(info);
+                RSSSource source = rssSourceList.get(holder.getAdapterPosition());
+                RSSItemsFragment fragment = RSSItemsFragment.newInstance(source);
                 ((MainActivity)getActivity()).startFragment(fragment);
             });
             return holder;
@@ -136,11 +136,11 @@ public class RSSSourcesFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            RSSSource info = rssSourceList.get(position);
-            Log.i("Adapter", info.getTitle());
-            holder.tvRSSTitle.setText(info.getTitle());
-            if(info.getImage() != null){
-                holder.ivRSSImage.setImageBitmap(info.getImage());
+            RSSSource source = rssSourceList.get(position);
+            Log.i("Adapter", source.getTitle());
+            holder.tvRSSTitle.setText(source.getTitle());
+            if(source.getImage() != null){
+                holder.ivRSSImage.setImageBitmap(source.getImage());
             }
         }
 

@@ -23,7 +23,7 @@ import java.util.List;
 
 public class RSSManager extends Service implements RSSManagerInterface {
     private List<RSSSource> rssSourceList;
-    private List<RSSInfo> rssInfoList;
+//    private List<RSSInfo> rssInfoList;
     private SQLiteDatabase db;
     @Override
     public void onCreate() {

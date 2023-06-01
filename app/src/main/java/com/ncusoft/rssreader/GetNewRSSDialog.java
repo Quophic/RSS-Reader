@@ -66,7 +66,7 @@ public class GetNewRSSDialog extends Dialog {
             try {
                 RSSInfo rssInfo = RSSUtils.getRSSInfoFromUrl(link);
                 RSSSource source = rssInfo.getSource();
-                if(rssInfo.getSource().getImageUrl() != null){
+                if(source.getImageUrl() != null){
                     Bitmap bitmap = RSSUtils.getImageFromUrl(source.getImageUrl());
                     source.setImage(bitmap);
                 }
