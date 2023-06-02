@@ -79,6 +79,7 @@ public class GetNewRSSDialog extends Dialog {
 
         @Override
         protected void onPostExecute(RSSInfo info) {
+            progressBar.setVisibility(View.GONE);
             if(info == null){
                 Toast.makeText(getContext(), R.string.illegal_RSS_source, Toast.LENGTH_SHORT).show();
                 return;
@@ -86,7 +87,6 @@ public class GetNewRSSDialog extends Dialog {
             manager.insertRSSSource(info.getSource());
             manager.insertRSSItems(info);
             RSSSourcesFragment.sendAddRSSSourceMsg();
-            progressBar.setVisibility(View.GONE);
             dismiss();
         }
     }
