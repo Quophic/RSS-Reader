@@ -6,4 +6,8 @@
     <string name="positive">是</string>
     <string name="negative">否</string>
     <string name="not_read">未读</string>
+    <string name="software_details">软件信息</string>
+    <string name="software_details_content">
+        信息
+    </string>
 </resources>

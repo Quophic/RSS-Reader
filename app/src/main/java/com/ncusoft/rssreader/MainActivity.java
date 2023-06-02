@@ -13,6 +13,7 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.ContextMenu;
+import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -79,6 +80,11 @@ public class MainActivity extends AppCompatActivity {
         }
         return super.onContextItemSelected(item);
     }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.options_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -90,13 +96,18 @@ public class MainActivity extends AppCompatActivity {
                     new AlertDialog.Builder(this)
                             .setTitle(R.string.exit_question)
                             .setNegativeButton(R.string.negative, (dialog, which) -> {})
-                            .setPositiveButton(R.string.positive, ((dialog, which) -> {
-                                finish();
-                            }))
+                            .setPositiveButton(R.string.positive, (dialog, which) -> finish())
                             .create()
                             .show();
                 }
                 break;
+            case R.id.item_software_details:
+                new AlertDialog.Builder(this)
+                        .setTitle(R.string.exit_question)
+                        .setPositiveButton(R.string.positive, (dialog, which) -> {})
+                        .create()
+                        .show();
+
         }
         return super.onOptionsItemSelected(item);
     }
