@@ -57,8 +57,8 @@ public class RSSItemsFragment extends Fragment {
         if(getArguments() != null){
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 source = getArguments().getSerializable(PARAM, RSSSource.class);
-            }else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                source = getArguments().getSerializable(PARAM, null);
+            }else{
+                source = (RSSSource) getArguments().getSerializable(PARAM);
             }
         }
     }
