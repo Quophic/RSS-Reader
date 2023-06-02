@@ -102,12 +102,9 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
             case R.id.item_software_details:
-                new AlertDialog.Builder(this)
-                        .setTitle(R.string.exit_question)
-                        .setPositiveButton(R.string.positive, (dialog, which) -> {})
-                        .create()
-                        .show();
-
+                Intent intent = new Intent(this, DetailActivity.class);
+                startActivity(intent);
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
