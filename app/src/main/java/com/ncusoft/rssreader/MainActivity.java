@@ -24,20 +24,6 @@ import com.ncusoft.rssreader.RSS.RSSManagerInterface;
 
 public class MainActivity extends AppCompatActivity {
     private RSSManagerInterface manager;
-    private ServiceConnection connection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            manager = ((RSSManager.Binder) service).getDBManager();
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.f_rss_title_container, new RSSSourcesFragment())
-                    .commit();
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-        }
-    };
     public RSSManagerInterface getManager(){
         return manager;
     }
@@ -49,8 +35,11 @@ public class MainActivity extends AppCompatActivity {
         if(actionBar != null){
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-        Intent intent = new Intent(this, RSSManager.class);
-        bindService(intent, connection, Context.BIND_AUTO_CREATE);
+        manager = new RSSManager(this);
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.f_rss_title_container, new RSSSourcesFragment())
+                .commit();
     }
     public void startFragment(Fragment fragment){
         getSupportFragmentManager()
@@ -60,10 +49,13 @@ public class MainActivity extends AppCompatActivity {
                 .setReorderingAllowed(true)
                 .commit();
     }
+
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onDestroy() {
+        manager.close();
+        super.onDestroy();
     }
+
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
@@ -102,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
             case R.id.item_software_details:
-                Intent intent = new Intent(this, DetailActivity.class);
+                Intent intent = new Intent(this, InformationActivity.class);
                 startActivity(intent);
                 break;
         }

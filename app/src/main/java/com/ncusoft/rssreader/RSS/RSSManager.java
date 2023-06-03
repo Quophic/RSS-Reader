@@ -2,6 +2,7 @@ package com.ncusoft.rssreader.RSS;
 
 import android.app.Service;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -21,21 +22,20 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class RSSManager extends Service implements RSSManagerInterface {
-    private List<RSSSource> rssSourceList;
-//    private List<RSSInfo> rssInfoList;
+public class RSSManager implements RSSManagerInterface {
     private SQLiteDatabase db;
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        DBHelper helper = new DBHelper(getApplicationContext());
+    private Context context;
+    public RSSManager(Context context){
+        this.context = context;
+        DBHelper helper = new DBHelper(context);
         db = helper.getWritableDatabase();
-        loadAllRSSSources();
-
+    }
+    public void close(){
+        db.close();
     }
 
-    private void loadAllRSSSources(){
-        rssSourceList = new ArrayList<>();
+    public List<RSSSource> getRSSSourceList() {
+        List<RSSSource> rssSourceList = new ArrayList<>();
         String[] columns = {
                 RSSSourcesContract._ID,
                 RSSSourcesContract.TITLE,
@@ -64,15 +64,12 @@ public class RSSManager extends Service implements RSSManagerInterface {
             rssSourceList.add(source);
         }
         cursor.close();
-    }
-
-    public List<RSSSource> getRSSSourceList() {
         return rssSourceList;
     }
 
 
 
-    public List<RSSSource> insertRSSSource(RSSSource source){
+    public void insertRSSSource(RSSSource source){
         ContentValues values = new ContentValues();
         values.put(RSSSourcesContract.TITLE, source.getTitle());
         values.put(RSSSourcesContract.LINK, source.getLink());
@@ -82,28 +79,22 @@ public class RSSManager extends Service implements RSSManagerInterface {
             values.put(RSSSourcesContract.IMAGE, outputStream.toByteArray());
         }
         long id = db.insert(RSSSourcesContract.TABLE_NAME, null, values);
-        if(id != -1){
-            source.setId(id);
-            rssSourceList.add(source);
-        }else{
-            Toast.makeText( this,"已经存在于列表中", Toast.LENGTH_SHORT).show();
+        if(id == -1){
+            Toast.makeText( context,"已经存在于列表中", Toast.LENGTH_SHORT).show();
         }
-        return rssSourceList;
     }
 
-    public List<RSSSource> deleteRSSSource(RSSSource source){
+    public void deleteRSSSource(RSSSource source){
         int result = db.delete(
                 RSSSourcesContract.TABLE_NAME,
                 RSSSourcesContract._ID + " = ?",
                 new String[]{String.valueOf(source.getId())});
-        if(result == 1){
-            rssSourceList.remove(source);
+        if(result >= 1){
             db.delete(
                     RSSItemsContract.TABLE_NAME,
                     RSSItemsContract.SOURCE_ID + " = ?",
                     new String[]{String.valueOf(source.getId())});
         }
-        return rssSourceList;
     }
 
     @Override
@@ -163,22 +154,5 @@ public class RSSManager extends Service implements RSSManagerInterface {
                 values,
                 RSSItemsContract._ID + "=?",
                 new String[]{String.valueOf(item.getId())});
-    }
-
-    @Override
-    public void onDestroy() {
-        db.close();
-        super.onDestroy();
-    }
-
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        return new Binder();
-    }
-    public class Binder extends android.os.Binder{
-        public RSSManagerInterface getDBManager(){
-            return RSSManager.this;
-        }
     }
 }
