@@ -2,8 +2,10 @@ package com.ncusoft.rssreader;
 
 
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.os.Build;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -24,45 +26,71 @@ import android.widget.TextView;
 import java.util.List;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.ncusoft.rssreader.RSS.RSSManager;
 import com.ncusoft.rssreader.RSS.RSSManagerInterface;
 import com.ncusoft.rssreader.RSS.RSSSource;
-
+import com.ncusoft.rssreader.RSS.UpdateRSSService;
 
 
 public class RSSSourcesFragment extends Fragment {
-    public static final int MSG_ADD_RSS_SOURCE = 1;
+    public static final int MSG_UPDATE_RSS_SOURCE = 1;
     public static final int MSG_DELETE_RSS_SOURCE = 2;
     public static final String RSS_SOURCE = "rss_source";
-    public static void sendAddRSSSourceMsg(){
-        if(handler == null){
-            return;
-        }
-        Message message = new Message();
-        message.what = RSSSourcesFragment.MSG_ADD_RSS_SOURCE;
-        handler.sendMessage(message);
-    }
-
-    public static void sendDeleteRSSSourceMsg(){
-        if(handler == null){
-            return;
-        }
-        Message message = new Message();
-        message.what = RSSSourcesFragment.MSG_DELETE_RSS_SOURCE;
-        handler.sendMessage(message);
-    }
     private List<RSSSource> rssSourceList;
     private RecyclerView rvRSSTitles;
     private FloatingActionButton fabAdd;
     private RSSTitlesAdapter adapter;
-    private static Handler handler;
+    private Handler handler = new Handler(Looper.getMainLooper()){
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what){
+                case MSG_UPDATE_RSS_SOURCE:
+                    rssSourceList = manager.getRSSSourceList();
+                    adapter.notifyDataSetChanged();
+                    break;
+                case MSG_DELETE_RSS_SOURCE:
+                    new AlertDialog.Builder(getContext())
+                            .setTitle(R.string.deletion_question)
+                            .setNegativeButton(R.string.negative, (dialog, which) -> {})
+                            .setPositiveButton(R.string.positive, ((dialog, which) -> {
+                                manager.deleteRSSSource(rssSourceList.get(position));
+                                rssSourceList = manager.getRSSSourceList();
+                                adapter.notifyDataSetChanged();
+                            }))
+                            .create()
+                            .show();
+                    break;
+            }
+        }
+    };
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent != null){
+                String action = intent.getAction();
+                Message message = new Message();
+                switch (action){
+                    case UpdateRSSService.BROADCAST_UPDATE_RSS_SOURCE:
+                        message.what = MSG_UPDATE_RSS_SOURCE;
+                        break;
+                    case MainActivity.BROADCAST_DELETE_RSS_SOURCE:
+                        message.what = MSG_DELETE_RSS_SOURCE;
+                        break;
+                }
+                handler.sendMessage(message);
+            }
+        }
+    };
     private RSSManagerInterface manager;
     private int position;
     private MainActivity mainActivity;
-
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(UpdateRSSService.BROADCAST_UPDATE_RSS_SOURCE);
+        intentFilter.addAction(MainActivity.BROADCAST_DELETE_RSS_SOURCE);
+        context.registerReceiver(receiver, intentFilter);
         if(context instanceof MainActivity){
             mainActivity = (MainActivity) context;
             manager = mainActivity.getManager();
@@ -73,28 +101,6 @@ public class RSSSourcesFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        handler = new Handler(Looper.getMainLooper()){
-            @Override
-            public void handleMessage(@NonNull Message msg) {
-                super.handleMessage(msg);
-                switch (msg.what){
-                    case MSG_ADD_RSS_SOURCE:
-                        adapter.notifyDataSetChanged();
-                        break;
-                    case MSG_DELETE_RSS_SOURCE:
-                        new AlertDialog.Builder(getContext())
-                                .setTitle(R.string.deletion_question)
-                                .setNegativeButton(R.string.negative, (dialog, which) -> {})
-                                .setPositiveButton(R.string.positive, ((dialog, which) -> {
-                                    manager.deleteRSSSource(rssSourceList.get(position));
-                                    adapter.notifyDataSetChanged();
-                                }))
-                                .create()
-                                .show();
-                        break;
-                }
-            }
-        };
     }
 
     @Override
@@ -111,6 +117,12 @@ public class RSSSourcesFragment extends Fragment {
             new GetNewRSSDialog(mainActivity).show();
         });
         return view;
+    }
+
+    @Override
+    public void onDetach() {
+        getContext().unregisterReceiver(receiver);
+        super.onDetach();
     }
 
     class RSSTitlesAdapter extends RecyclerView.Adapter<RSSTitlesAdapter.ViewHolder> {

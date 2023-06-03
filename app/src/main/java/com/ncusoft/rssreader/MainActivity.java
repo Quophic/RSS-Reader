@@ -23,6 +23,7 @@ import com.ncusoft.rssreader.RSS.RSSManagerInterface;
 
 
 public class MainActivity extends AppCompatActivity {
+    public static final String BROADCAST_DELETE_RSS_SOURCE = "android.intent.action.BROADCAST_DELETE_RSS_SOURCE";
     private RSSManagerInterface manager;
     public RSSManagerInterface getManager(){
         return manager;
@@ -67,7 +68,9 @@ public class MainActivity extends AppCompatActivity {
     public boolean onContextItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.item_delete:
-                RSSSourcesFragment.sendDeleteRSSSourceMsg();
+                Intent intent = new Intent();
+                intent.setAction(BROADCAST_DELETE_RSS_SOURCE);
+                sendBroadcast(intent);
                 break;
         }
         return super.onContextItemSelected(item);
