@@ -16,6 +16,10 @@
         android:theme="@style/Theme.RSSReader"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <service
+            android:name=".RSS.UpdateRSSService"
+            android:exported="false"></service>
+
         <activity
             android:name=".SplashActivity"
             android:exported="true">
@@ -26,13 +30,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".DetailActivity"
+            android:name=".InformationActivity"
             android:exported="false"
-            android:label="@string/software_details"/>
+            android:label="@string/software_details" />
         <activity
             android:name=".MainActivity"
-            android:exported="true">
-        </activity>
+            android:exported="true"></activity>
 
         <service android:name=".RSS.RSSManager" />
     </application>

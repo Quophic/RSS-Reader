@@ -2,10 +2,16 @@ package com.ncusoft.rssreader;
 
 
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -21,17 +27,60 @@ import com.ncusoft.rssreader.RSS.RSSManagerInterface;
 import com.ncusoft.rssreader.RSS.RSSSource;
 import com.ncusoft.rssreader.RSS.RSSInfo;
 import com.ncusoft.rssreader.RSS.RSSUtils;
+import com.ncusoft.rssreader.RSS.UpdateRSSService;
 
 
 public class GetNewRSSDialog extends Dialog {
+    private static final int MESSAGE_SUCCESS = 0;
+    private static final int MESSAGE_FAIL = 1;
     private EditText etInput;
     private Button btnCancel;
     private Button btnOk;
-    private RSSManagerInterface manager;
     private ProgressBar progressBar;
+    private Handler handler = new Handler(Looper.getMainLooper()){
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            switch (msg.what){
+                case MESSAGE_SUCCESS:
+                    dismiss();
+                    break;
+                case MESSAGE_FAIL:
+                    Toast.makeText(getContext(), R.string.illegal_RSS_source, Toast.LENGTH_SHORT).show();
+                    progressBar.setVisibility(View.GONE);
+                    break;
+            }
+            super.handleMessage(msg);
+        }
+    };
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent != null){
+                String action = intent.getAction();
+                Message message = new Message();
+                switch (action){
+                    case UpdateRSSService.BROADCAST_UPDATE_RSS_SOURCE:
+                        message.what = MESSAGE_SUCCESS;
+                        break;
+                    case UpdateRSSService.BROADCAST_UPDATE_RSS_SOURCE_FAIL:
+                        message.what = MESSAGE_FAIL;
+                        break;
+                }
+                handler.sendMessage(message);
+            }
+        }
+    };
     public GetNewRSSDialog(@NonNull Context context) {
         super(context);
-        manager = ((MainActivity) context).getManager();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(UpdateRSSService.BROADCAST_UPDATE_RSS_SOURCE);
+        intentFilter.addAction(UpdateRSSService.BROADCAST_UPDATE_RSS_SOURCE_FAIL);
+        getContext().registerReceiver(receiver, intentFilter);
     }
 
     @Override
@@ -43,51 +92,18 @@ public class GetNewRSSDialog extends Dialog {
         btnCancel = findViewById(R.id.btn_cancel);
         btnCancel.setOnClickListener(v -> dismiss());
         btnOk = findViewById(R.id.btn_ok);
+        progressBar = findViewById(R.id.progress);
         btnOk.setOnClickListener(v -> {
             String link = etInput.getText().toString();
             Log.i("input", link);
-            new RSSTask(link).execute();
-        });
-        progressBar = findViewById(R.id.progress);
-    }
-    class RSSTask extends AsyncTask<RSSInfo, Void, RSSInfo> {
-        private String link;
-        public RSSTask(String link){
-            this.link = link;
-        }
-
-        @Override
-        protected void onPreExecute() {
+            UpdateRSSService.startActionUpdateRSSSource(getContext(), link);
             progressBar.setVisibility(View.VISIBLE);
-        }
+        });
+    }
 
-        @Override
-        protected RSSInfo doInBackground(RSSInfo... infos) {
-            try {
-                RSSInfo rssInfo = RSSUtils.getRSSInfoFromUrl(link);
-                RSSSource source = rssInfo.getSource();
-                if(source.getImageUrl() != null){
-                    Bitmap bitmap = RSSUtils.getImageFromUrl(source.getImageUrl());
-                    source.setImage(bitmap);
-                }
-                return rssInfo;
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(RSSInfo info) {
-            progressBar.setVisibility(View.GONE);
-            if(info == null){
-                Toast.makeText(getContext(), R.string.illegal_RSS_source, Toast.LENGTH_SHORT).show();
-                return;
-            }
-            manager.insertRSSSource(info.getSource());
-            manager.insertRSSItems(info);
-            RSSSourcesFragment.sendAddRSSSourceMsg();
-            dismiss();
-        }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        getContext().unregisterReceiver(receiver);
     }
 }
