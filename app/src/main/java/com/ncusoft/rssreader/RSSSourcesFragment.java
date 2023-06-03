@@ -34,7 +34,6 @@ import com.ncusoft.rssreader.RSS.UpdateRSSService;
 public class RSSSourcesFragment extends Fragment {
     public static final int MSG_UPDATE_RSS_SOURCE = 1;
     public static final int MSG_DELETE_RSS_SOURCE = 2;
-    public static final String RSS_SOURCE = "rss_source";
     private List<RSSSource> rssSourceList;
     private RecyclerView rvRSSTitles;
     private FloatingActionButton fabAdd;
