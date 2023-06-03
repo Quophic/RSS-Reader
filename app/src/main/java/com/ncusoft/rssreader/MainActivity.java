@@ -10,6 +10,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.ContextMenu;
@@ -24,6 +25,8 @@ import com.ncusoft.rssreader.RSS.RSSManagerInterface;
 
 public class MainActivity extends AppCompatActivity {
     public static final String BROADCAST_DELETE_RSS_SOURCE = "android.intent.action.BROADCAST_DELETE_RSS_SOURCE";
+    public static final String LOCAL_FILE_NAME = "local_store";
+    public static final String STORED_URL = "stored_url";
     private RSSManagerInterface manager;
     public RSSManagerInterface getManager(){
         return manager;
@@ -41,6 +44,12 @@ public class MainActivity extends AppCompatActivity {
                 .beginTransaction()
                 .replace(R.id.f_rss_title_container, new RSSSourcesFragment())
                 .commit();
+        SharedPreferences sharedPreferences = getSharedPreferences(LOCAL_FILE_NAME, Context.MODE_PRIVATE);
+        String storedUrl = sharedPreferences.getString(STORED_URL, "");
+        if(!storedUrl.equals("")){
+            Fragment fragment = WebViewFragment.newInstance(storedUrl);
+            startFragment(fragment);
+        }
     }
     public void startFragment(Fragment fragment){
         getSupportFragmentManager()

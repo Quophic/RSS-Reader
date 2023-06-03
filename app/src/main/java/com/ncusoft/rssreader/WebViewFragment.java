@@ -1,5 +1,7 @@
 package com.ncusoft.rssreader;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -34,6 +36,11 @@ public class WebViewFragment extends Fragment {
         if (getArguments() != null) {
             url = getArguments().getString(PARAM);
         }
+        SharedPreferences sharedPreferences =
+                getContext().getSharedPreferences(MainActivity.LOCAL_FILE_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(MainActivity.STORED_URL, url);
+        editor.apply();
     }
 
     @Override
@@ -45,5 +52,15 @@ public class WebViewFragment extends Fragment {
         webView.setWebViewClient(new WebViewClient());
         webView.loadUrl(url);
         return view;
+    }
+
+    @Override
+    public void onDestroy() {
+        SharedPreferences sharedPreferences =
+                getContext().getSharedPreferences(MainActivity.LOCAL_FILE_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(MainActivity.STORED_URL, "");
+        editor.apply();
+        super.onDestroy();
     }
 }
