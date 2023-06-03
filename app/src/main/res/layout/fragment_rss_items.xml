@@ -4,13 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".RSSItemsFragment">
-
-    <ProgressBar
-        android:id="@+id/progress"
-        android:layout_centerInParent="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"/>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_rss_items"
         android:layout_width="match_parent"

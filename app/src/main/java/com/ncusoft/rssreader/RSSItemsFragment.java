@@ -38,7 +38,6 @@ import java.util.List;
 public class RSSItemsFragment extends Fragment {
     private static final int MSG_UPDATE_RSS_ITEM = 1;
     private static final String PARAM = "param";
-    private ProgressBar progressBar;
     private RecyclerView rvRSSItems;
     private List<RSSItem> rssItemList = null;
     private RSSSource source;
@@ -124,45 +123,12 @@ public class RSSItemsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_rss_items, container, false);
-        progressBar = view.findViewById(R.id.progress);
         rvRSSItems = view.findViewById(R.id.rv_rss_items);
         rvRSSItems.setLayoutManager(new LinearLayoutManager(view.getContext()));
         rssItemList = manager.getRSSItemList(source);
         rvRSSItems.setAdapter(new RSSItemsAdapter());
         return view;
     }
-
-    class RSSTask extends AsyncTask<RSSInfo, Void, RSSInfo> {
-        private String link;
-        public RSSTask(String link){
-            this.link = link;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            progressBar.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected RSSInfo doInBackground(RSSInfo... rssInfos) {
-            try {
-                return RSSUtils.getRSSInfoFromUrl(link);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        @Override
-        protected void onPostExecute(RSSInfo rssInfo) {
-            if(rssInfo != null){
-                manager.insertRSSItems(rssInfo);
-            }
-            rssItemList = manager.getRSSItemList(source);
-            rvRSSItems.setAdapter(new RSSItemsAdapter());
-            progressBar.setVisibility(View.GONE);
-        }
-    }
-
     class RSSItemsAdapter extends RecyclerView.Adapter< RSSItemsAdapter.ViewHolder> {
         private SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日 E");
         @NonNull
