@@ -1,7 +1,10 @@
 package com.ncusoft.rssreader;
 
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -11,11 +14,15 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ncusoft.rssreader.DataBase.Contract.RSSItemsContract;
 import com.ncusoft.rssreader.RSS.RSSManagerInterface;
@@ -23,11 +30,13 @@ import com.ncusoft.rssreader.RSS.RSSSource;
 import com.ncusoft.rssreader.RSS.RSSInfo;
 import com.ncusoft.rssreader.RSS.RSSItem;
 import com.ncusoft.rssreader.RSS.RSSUtils;
+import com.ncusoft.rssreader.RSS.UpdateRSSService;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class RSSItemsFragment extends Fragment {
+    private static final int MSG_UPDATE_RSS_ITEM = 1;
     private static final String PARAM = "param";
     private ProgressBar progressBar;
     private RecyclerView rvRSSItems;
@@ -36,8 +45,35 @@ public class RSSItemsFragment extends Fragment {
     private RSSManagerInterface manager;
     private String originActionBarTitle;
     private MainActivity context;
+    private Handler handler = new Handler(Looper.getMainLooper()){
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            switch (msg.what){
+                case MSG_UPDATE_RSS_ITEM:
+                    rssItemList = manager.getRSSItemList(source);
+                    rvRSSItems.setAdapter(new RSSItemsAdapter());
+                    Toast.makeText(getContext(), "已是最新", Toast.LENGTH_SHORT).show();
+                    break;
+            }
+            super.handleMessage(msg);
+        }
+    };
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent != null) {
+                String action = intent.getAction();
+                Message message = new Message();
+                switch (action) {
+                    case UpdateRSSService.BROADCAST_UPDATE_RSS_ITEM:
+                        message.what = MSG_UPDATE_RSS_ITEM;
+                        break;
+                }
+                handler.sendMessage(message);
+            }
+        }
+    };
     public static RSSItemsFragment newInstance(RSSSource info) {
-
         Bundle args = new Bundle();
         args.putSerializable(PARAM, info);
         RSSItemsFragment fragment = new RSSItemsFragment();
@@ -48,6 +84,9 @@ public class RSSItemsFragment extends Fragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(UpdateRSSService.BROADCAST_UPDATE_RSS_ITEM);
+        context.registerReceiver(receiver, intentFilter);
         if(context instanceof MainActivity){
             this.context = (MainActivity)context;
             manager = this.context.getManager();
@@ -64,8 +103,15 @@ public class RSSItemsFragment extends Fragment {
                 source = (RSSSource) getArguments().getSerializable(PARAM);
             }
         }
+        UpdateRSSService.startActionUpdateRSSItem(getContext(), source.getLink(), source.getId());
         originActionBarTitle = context.getSupportActionBar().getTitle().toString();
         context.getSupportActionBar().setTitle(source.getTitle());
+    }
+
+    @Override
+    public void onDetach() {
+        getContext().unregisterReceiver(receiver);
+        super.onDetach();
     }
 
     @Override
@@ -81,12 +127,8 @@ public class RSSItemsFragment extends Fragment {
         progressBar = view.findViewById(R.id.progress);
         rvRSSItems = view.findViewById(R.id.rv_rss_items);
         rvRSSItems.setLayoutManager(new LinearLayoutManager(view.getContext()));
-
-        if(rssItemList == null){
-            new RSSTask(source.getLink()).execute();
-        }else{
-            rvRSSItems.setAdapter(new RSSItemsAdapter());
-        }
+        rssItemList = manager.getRSSItemList(source);
+        rvRSSItems.setAdapter(new RSSItemsAdapter());
         return view;
     }
 

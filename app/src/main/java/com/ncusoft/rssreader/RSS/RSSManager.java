@@ -81,7 +81,9 @@ public class RSSManager implements RSSManagerInterface {
         long id = db.insert(RSSSourcesContract.TABLE_NAME, null, values);
         if(id == -1){
             Toast.makeText( context,"已经存在于列表中", Toast.LENGTH_SHORT).show();
+            return;
         }
+        source.setId(id);
     }
 
     public void deleteRSSSource(RSSSource source){
