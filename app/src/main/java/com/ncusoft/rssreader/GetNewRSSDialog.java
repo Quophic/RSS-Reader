@@ -6,8 +6,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Bitmap;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -22,11 +20,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import com.ncusoft.rssreader.RSS.RSSManager;
-import com.ncusoft.rssreader.RSS.RSSManagerInterface;
-import com.ncusoft.rssreader.RSS.RSSSource;
-import com.ncusoft.rssreader.RSS.RSSInfo;
-import com.ncusoft.rssreader.RSS.RSSUtils;
 import com.ncusoft.rssreader.RSS.UpdateRSSService;
 
 
