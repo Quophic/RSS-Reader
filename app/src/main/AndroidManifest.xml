@@ -27,7 +27,8 @@
         </activity>
         <activity
             android:name=".DetailActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:label="@string/software_details"/>
         <activity
             android:name=".MainActivity"
             android:exported="true">

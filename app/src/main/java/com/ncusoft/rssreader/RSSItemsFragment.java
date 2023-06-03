@@ -34,6 +34,8 @@ public class RSSItemsFragment extends Fragment {
     private List<RSSItem> rssItemList = null;
     private RSSSource source;
     private RSSManagerInterface manager;
+    private String originActionBarTitle;
+    private MainActivity context;
     public static RSSItemsFragment newInstance(RSSSource info) {
 
         Bundle args = new Bundle();
@@ -47,7 +49,8 @@ public class RSSItemsFragment extends Fragment {
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         if(context instanceof MainActivity){
-            manager = ((MainActivity)context).getManager();
+            this.context = (MainActivity)context;
+            manager = this.context.getManager();
         }
     }
 
@@ -61,6 +64,14 @@ public class RSSItemsFragment extends Fragment {
                 source = (RSSSource) getArguments().getSerializable(PARAM);
             }
         }
+        originActionBarTitle = context.getSupportActionBar().getTitle().toString();
+        context.getSupportActionBar().setTitle(source.getTitle());
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        context.getSupportActionBar().setTitle(originActionBarTitle);
     }
 
     @Override
